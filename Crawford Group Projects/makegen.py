@@ -17,7 +17,7 @@ __lapack_lib = "lapack"
 def __setup_make(fd : int):
     print("# This file was generated automatically.", file = fd)
     
-def __write_libs(fd, blas_path, lapack_path, cblas_path, lapacke_path, blas_name, lapack_name, cblas_name, lapacke_name):
+def __write_libs(fd, blas_path, lapack_path, cblas_path, lapacke_path, blas_name, lapack_name, cblas_name, lapacke_name, others):
     print("BLAS_LIB=%s"%(blas_path), file = fd)
     print("LAPACK_LIB=%s"%(lapack_path), file = fd)
     print("BLAS_NAME=%s"%(blas_name), file = fd)
@@ -26,6 +26,7 @@ def __write_libs(fd, blas_path, lapack_path, cblas_path, lapacke_path, blas_name
     print("LAPACKE_LIB=%s"%(lapacke_path), file = fd)
     print("CBLAS_NAME=%s"%(cblas_name), file = fd)
     print("LAPACKE_NAME=%s"%(lapacke_name), file = fd)
+    print("OTHER_ARGS=%s"%(others), file = fd)
     
 def __write_includes(fd, blas_name, lapack_name):
     print("CBLAS_HEADER=%s"%(blas_name), file = fd)
@@ -35,7 +36,20 @@ def __write_export(fd):
     print("export", file = fd)
     
 def generate():
-    paths = open("defs.mk", "x")
+    try :
+        paths = open("paths.mk", "x")
+        print("'paths.mk' created successfully.")
+    except FileExistsError:
+        print("Could not create file 'paths.mk'; deleting.")
+        print("os.remove('paths.mk')")
+        try :
+            os.remove("paths.mk")
+            print("'paths.mk' successfully deleted.")
+        except:
+            print("File could not be removed.")
+            exit()
+        paths = open("paths.mk", "x")
+        print("'paths.mk' created successfully.")
     blas_lib = input("BLAS library name (default 'blas'): ")
     blas_lib_path = input("BLAS library location (default to check path): ")
     lapack_lib = input("LAPACK library name (default 'lapack'): ");
@@ -46,6 +60,7 @@ def generate():
     lapacke_lib = input("LAPACKE library name (default 'lapacke'): ");
     lapacke_lib_path = input("LAPACKE library location (default to check path): ")
     lapacke_header = input("LAPACKE header file full name (default to 'lapacke.h'): ")
+    others = input("Any dependencies or other arguments: ")
     
     if blas_lib == '':
         blas_lib = __blas_lib
@@ -61,9 +76,10 @@ def generate():
         lapacke_header = __lapacke_h
     
     __setup_make(paths)
-    __write_libs(paths, blas_path, lapack_path, cblas_path, lapacke_path, blas_lib, lapack_lib, cblas_lib, lapacke_lib)
-    __wirte_includes(paths, cblas_header, lapacke_header)
+    __write_libs(paths, blas_lib_path, lapack_lib_path, cblas_lib_path, lapacke_lib_path, blas_lib, lapack_lib, cblas_lib, lapacke_lib, others)
+    __write_includes(paths, cblas_header, lapacke_header)
     __write_export(paths)
-    close(paths)
+    print("'paths.mk' successfully formatted.")
+    paths.close()
     
 generate()
