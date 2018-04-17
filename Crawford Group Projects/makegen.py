@@ -18,12 +18,12 @@ def __setup_make(fd : int):
     print("# This file was generated automatically.", file = fd)
     
 def __write_libs(fd, blas_path, lapack_path, cblas_path, lapacke_path, blas_name, lapack_name, cblas_name, lapacke_name, others):
-    print("BLAS_LIB=%s"%(blas_path), file = fd)
-    print("LAPACK_LIB=%s"%(lapack_path), file = fd)
+    print("BLAS_LOC=%s"%(blas_path), file = fd)
+    print("LAPACK_LOC=%s"%(lapack_path), file = fd)
     print("BLAS_NAME=%s"%(blas_name), file = fd)
     print("LAPACK_NAME=%s"%(lapack_name), file = fd)
-    print("CBLAS_LIB=%s"%(cblas_path), file = fd)
-    print("LAPACKE_LIB=%s"%(lapacke_path), file = fd)
+    print("CBLAS_LOC=%s"%(cblas_path), file = fd)
+    print("LAPACKE_LOC=%s"%(lapacke_path), file = fd)
     print("CBLAS_NAME=%s"%(cblas_name), file = fd)
     print("LAPACKE_NAME=%s"%(lapacke_name), file = fd)
     print("OTHER_ARGS=%s"%(others), file = fd)

@@ -2,6 +2,7 @@ include defs.mk
 
 
 all:
+	$(MAKE) -C ./Memory
 	$(MAKE) -C ./Calculations
 	$(MAKE) -C ./Molecule
 	$(MAKE) -C ./Input_Output
