@@ -23,6 +23,7 @@ public class GraphOptimization {
 		
 		if(p1.getNeighbors().contains(p2) || p2.getNeighbors().contains(p1)) {
 			force.x = p2.getData().x - p1.getData().x;
+			
 		}
 	}
 
