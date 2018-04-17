@@ -21,7 +21,6 @@
  * concerns, or bugs.
  */
 
-#include <cblas.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +29,6 @@
 #include <stdio.h>
 #include "../calculations.h"
 #include "../molecule.h"
-#include <lapacke.h>
 #include "../output.h"
 
 static double dotProd(double x1, double y1, double z1, double x2, double y2,

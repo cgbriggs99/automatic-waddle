@@ -9,12 +9,10 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include <lapacke.h>
 #include "../calculations.h"
 #include "../input.h"
 #include "../output.h"
 #include "../molecule.h"
-#include "../../Free/mem_custom.h"
 
 #define EPS 0.0000000001
 

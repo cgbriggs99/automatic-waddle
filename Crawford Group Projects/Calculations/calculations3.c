@@ -5,17 +5,15 @@
  *      Author: cgbri
  */
 
-#include <cblas.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <lapacke.h>
 #include <stdarg.h>
 #include "../calculations.h"
 #include "../input.h"
 #include "../output.h"
 #include "../molecule.h"
-#include "../../Free/mem_custom.h"
+#include "../Memory/mem_custom.h"
 
 static int comparedd(const void *a, const void *b) {
 	if(**((double **) a) > **((double **) b)) {

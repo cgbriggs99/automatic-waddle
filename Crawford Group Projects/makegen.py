@@ -17,6 +17,9 @@ __lapack_lib = "lapack"
 def __setup_make(fd : int):
     print("# This file was generated automatically.", file = fd)
     
+def __write_others(fd, compiler):
+    print("CC=%s"%(compiler), file = fd)
+    
 def __write_libs(fd, blas_path, lapack_path, cblas_path, lapacke_path, blas_name, lapack_name, cblas_name, lapacke_name, others):
     print("BLAS_LOC=%s"%(blas_path), file = fd)
     print("LAPACK_LOC=%s"%(lapack_path), file = fd)
@@ -50,6 +53,7 @@ def generate():
             exit()
         paths = open("paths.mk", "x")
         print("'paths.mk' created successfully.")
+    compiler = input("Enter the compiler command: ");
     blas_lib = input("BLAS library name (default 'blas'): ")
     blas_lib_path = input("BLAS library location (default to check path): ")
     lapack_lib = input("LAPACK library name (default 'lapack'): ");
@@ -76,6 +80,7 @@ def generate():
         lapacke_header = __lapacke_h
     
     __setup_make(paths)
+    __write_others(paths, compiler)
     __write_libs(paths, blas_lib_path, lapack_lib_path, cblas_lib_path, lapacke_lib_path, blas_lib, lapack_lib, cblas_lib, lapacke_lib, others)
     __write_includes(paths, cblas_header, lapacke_header)
     __write_export(paths)
