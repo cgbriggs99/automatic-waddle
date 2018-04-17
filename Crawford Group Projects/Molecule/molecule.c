@@ -20,7 +20,7 @@
 
 #include "../molecule.h"
 #include "../calculations.h"
-#include "../../Free/mem_custom.h"
+#include "../Memory/mem_custom.h"
 
 static int index_(int i, int j) {
 	if(i >= j) {

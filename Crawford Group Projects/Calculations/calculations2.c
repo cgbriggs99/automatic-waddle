@@ -13,6 +13,7 @@
 #include "../input.h"
 #include "../output.h"
 #include "../molecule.h"
+#include "../Memory/mem_custom.h"
 
 #define EPS 0.0000000001
 
