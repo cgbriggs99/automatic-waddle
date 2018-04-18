@@ -21,7 +21,7 @@
  * concerns, or bugs.
  */
 
-#include "D:/Intel Math/compilers_and_libraries/windows/mkl/include/mkl_lapacke.h"
+#include "../lapack_local.h"
 
 #include <math.h>
 #include <stdlib.h>

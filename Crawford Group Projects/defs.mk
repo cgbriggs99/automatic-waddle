@@ -5,7 +5,7 @@ OPTIMIZE=-O3 -Ofast -faggressive-loop-optimizations -falign-functions -fauto-inc
 DEBUG=-DDEBUG -g3 -ggdb
 EXCEL=$(DEBUG) -DEXCEL
 
-LIBS=-L ../ -L ./ -lm -l memory -lmolecule -Xlinker -rpath=../ -Xlinker -rpath=./
+LIBS=-L ../ -L ./ -lm -l memory -lgfortran -lmolecule -Xlinker -rpath=../ -Xlinker -rpath=./
 
 CFLAGS=$(DEBUG) $(OTHER_ARGS)
 ifneq ($(strip $(BLAS_LOC)),)
@@ -41,5 +41,5 @@ LIBS+= -l $(LAPACKE_NAME)
 endif
 
 
-CFLAGS=$(DEBUG) $(OTHER_ARGS) -include $(CBLAS_HEADER) -include $(LAPACKE_HEADER)
+CFLAGS=$(DEBUG) $(OTHER_ARGS)
 export OPTIMIZE, DEBUG, EXCEL, CFLAGS

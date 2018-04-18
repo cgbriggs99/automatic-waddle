@@ -5,6 +5,8 @@
  *      Author: cgbri
  */
 
+#include "../lapack_local.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
