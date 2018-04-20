@@ -13,9 +13,10 @@
 #include "../calculations.h"
 #include "../input.h"
 #include "../output.h"
+#include "../linker.h"
 
 int main(int argc, char **argv) {
-
+	linkDLLs();
 	FILE *mol, *enuc, *s, *t, *v, *eri, *mux, *muy, *muz;
 	molecule_t *molec;
 	double **fmo;
@@ -56,6 +57,8 @@ int main(int argc, char **argv) {
 	fclose(mux);
 	fclose(muy);
 	fclose(muz);
+
+	unlinkDLLs();
 
 	return (0);
 }

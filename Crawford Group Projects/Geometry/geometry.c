@@ -13,9 +13,11 @@
 #include "../output.h"
 #include "../calculations.h"
 #include "../molecule.h"
+#include "../linker.h"
 
 
 int main(int argc, char **argv) {
+	linkDLLs();
 	FILE *fp;
 	if(argc < 2) {
 		fp = stdin;
@@ -31,6 +33,7 @@ int main(int argc, char **argv) {
 	printRotor(mol);
 	fclose(fp);
 	deleteMolecule(mol);
+	unlinkDLLs();
 	return (0);
 }
 

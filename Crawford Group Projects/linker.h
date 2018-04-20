@@ -8,9 +8,7 @@
 #ifndef LINKER_H_
 #define LINKER_H_
 
-const char dll_str[] = DLLS;
-
-extern void linkDLLs(int argc, char **argv);
+extern void linkDLLs(void);
 
 extern void unlinkDLLs(void);
 

@@ -13,8 +13,10 @@
 #include "../calculations.h"
 #include "../input.h"
 #include "../output.h"
+#include "../linker.h"
 
 int main(int argc, char **argv) {
+	linkDLLs();
 	FILE *mol, *enuc, *s, *t, *v, *eri, *mux, *muy, *muz;
 	molecule_t *molec;
 
@@ -45,4 +47,5 @@ int main(int argc, char **argv) {
 
 	printf("\nEcc\t%f\nEtot\t%f\n", molec->ccsd_energy,
 	    molec->scf_energy + molec->ccsd_energy);
+	unlinkDLLs();
 }

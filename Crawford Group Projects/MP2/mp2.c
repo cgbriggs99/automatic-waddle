@@ -11,8 +11,10 @@
 #include "../output.h"
 #include "../molecule.h"
 #include "../calculations.h"
+#include "../linker.h"
 
 int main(int argc, char **argv) {
+	linkDLLs();
 	FILE *mol, *enuc, *s, *t, *v, *eri, *mux, *muy, *muz;
 	molecule_t *molec;
 
@@ -39,4 +41,5 @@ int main(int argc, char **argv) {
 	printMP2(molec);
 
 	deleteMolecule(molec);
+	unlinkDLLs();
 }

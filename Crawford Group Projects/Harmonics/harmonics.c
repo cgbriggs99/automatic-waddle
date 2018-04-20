@@ -28,8 +28,10 @@
 #include "../molecule.h"
 #include "../output.h"
 #include "../input.h"
+#include "../linker.h"
 
 int main(int argc, char **argv) {
+	linkDLLs();
 	FILE *mol, *hes;
 
 	molecule_t *molecule;
@@ -58,5 +60,6 @@ int main(int argc, char **argv) {
 	if(argc == 2) {
 		fclose(hes);
 	}
+	unlinkDLLs();
 	return (0);
 }
