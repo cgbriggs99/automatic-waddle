@@ -13,10 +13,10 @@ geometry
 harmonics
 mp2
 scf
+.cproject
 !*.c
 /local_build/**
 /Default/
 .project
-.cproject
 .pydevproject
 .settings/**
