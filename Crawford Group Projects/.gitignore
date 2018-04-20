@@ -15,4 +15,4 @@ harmonics
 mp2
 scf
 !*.c
-/local_build/**
+#/local_build/**
