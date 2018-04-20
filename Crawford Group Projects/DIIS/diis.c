@@ -13,6 +13,7 @@
 #include "../calculations.h"
 #include "../input.h"
 #include "../output.h"
+#include "../linker.h"
 
 int main(int argc, char **argv) {
 	linkDLLs();

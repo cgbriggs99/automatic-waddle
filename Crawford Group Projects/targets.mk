@@ -8,10 +8,11 @@ ARCH_OBJS=./Memory/alloc$(OBJ_SUFF) ./Memory/contig$(OBJ_SUFF) ./Memory/free$(OB
 ./Calculations/calculations4$(OBJ_SUFF) ./Windows_Linking/linker$(OBJ_SUFF)
 
 
-EXECS=Geometry/geometry CCSD/ccsd DIIS/diis Harmonics/harmonics MP2/mp2 SCF/scf
+EXECS=./Geometry/geometry$(EXEC_SUFF) ./CCSD/ccsd$(EXEC_SUFF) ./DIIS/diis$(EXEC_SUFF) ./Harmonics/harmonics$(EXEC_SUFF)\
+./MP2/mp2$(EXEC_SUFF) ./SCF/scf$(EXEC_SUFF)
 
 
-SOURCES=Geometry/geometry.c CCSD/ccsd.c DIIS/diis.c Harmonics/harmonics.c MP2/mp2.c SCF/scf.c
+SOURCES=./Geometry/geometry.c ./CCSD/ccsd.c ./DIIS/diis.c ./Harmonics/harmonics.c ./MP2/mp2.c ./SCF/scf.c
 
 
 OUTPUTS=objs$(ARCH_SUFF)

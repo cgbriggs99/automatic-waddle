@@ -14,10 +14,6 @@ init_makefile:
 	@echo $(PYTHON)
 	$(PYTHON) generate_makefile.py
 
--include ./local_build/paths.mk
--include ./local_build/defs.mk
-include targets.mk	
-
 .PHONY: all
 all: $(TARGETS)
 
@@ -42,8 +38,7 @@ $(ARCH_OBJS): $(ARCH_OBJS:$(OBJ_SUFF)=.c)
 #This works.
 $(SOURCES): $(EXEC_DEPS)
 	$(CC) -o $(subst .c,$(EXEC_SUFF),$@) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
-	@echo $@
-
+	
 
 	
 
