@@ -158,7 +158,7 @@ void outputSFC(molecule_t *molecule) {
 }
 
 void printArray(char *title, double **array, int r, int c) {
-	printf(title);
+	puts(title);
 	for(int i = 0; i < r; i++) {
 		for(int j = 0; j < c; j++) {
 			printf("%f\t", array[i][j]);

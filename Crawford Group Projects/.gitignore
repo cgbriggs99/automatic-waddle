@@ -5,4 +5,5 @@
 *.so
 *.a
 *.out
+defs.mk
 paths.mk

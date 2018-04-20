@@ -1,20 +1,40 @@
-include paths.mk
 include defs.mk
+include targets.mk
 
+#This is the python command to use to initialize the build environment.
+PYTHON=python3
 
-all:
-	$(MAKE) -B -C ./Memory
-	$(MAKE) -B -C ./Calculations
-	$(MAKE) -B -C ./Molecule
-	$(MAKE) -B -C ./Input_Output
-	ld -r -soname molecule.dll calculations.o molecule.o io.o
-	$(MAKE) -C ./Geometry
-#	$(MAKE) -C ./Harmonics
-#	$(MAKE) -C ./SCF
-#	$(MAKE) -C ./MP2
-#	$(MAKE) -C ./CCSD
-#	$(MAKE) -C ./DIIS
-#	$(MAKE) -C ./Symmetry
+#This is the recipe to initialize the build environment. It works.
+.PHONY: init_makefile
+init_makefile:
+	$(PYTHON) ./generate_makefile.py
 	
+
+.PHONY: all
+all: $(TARGETS)
+
+#This works.
+.PHONY: clean
 clean:
-	del *.o
+	$(RM) $(L1_REMOVE)
+
+#This works.
+.PHONY: purge
+purge:
+	$(RM) $(L2_REMOVE)
+	
+#This works.
+objs$(ARCH_SUFF): $(ARCH_OBJS)
+	$(AR) -cr $@ $?
+	
+#This works.
+$(ARCH_OBJS:$(OBJ_SUFF)=.c): 
+	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.c, $@)
+
+#Compiles fine. Now complete the command line.
+$(SOURCES): $(EXEC_DEPS)
+	$(CC) $@ $+ $(CFLAGS) $(LDFLAGS)
+
+
+	
+

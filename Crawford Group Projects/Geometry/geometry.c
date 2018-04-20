@@ -16,8 +16,6 @@
 
 
 int main(int argc, char **argv) {
-	puts("db0");
-	fflush(stdout);
 	FILE *fp;
 	if(argc < 2) {
 		fp = stdin;
@@ -25,8 +23,6 @@ int main(int argc, char **argv) {
 		fp = fopen(argv[1], "r");
 	}
 
-	puts("db1");
-	fflush(stdout);
 	molecule_t *mol;
 	input(&mol, fp);
 	printDists(mol);
@@ -35,8 +31,6 @@ int main(int argc, char **argv) {
 	printRotor(mol);
 	fclose(fp);
 	deleteMolecule(mol);
-	puts("db2");
-	fflush(stdout);
 	return (0);
 }
 
