@@ -7,3 +7,4 @@
 *.out
 defs.mk
 paths.mk
+!Default Files/**
