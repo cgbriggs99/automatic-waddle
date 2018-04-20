@@ -1,5 +1,5 @@
-include paths.mk
-include defs.mk
+include ./local_build/paths.mk
+include ./local_build/defs.mk
 include targets.mk
 
 #This is the python command to use to initialize the build environment.

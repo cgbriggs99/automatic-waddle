@@ -4,31 +4,7 @@
 # and artifact prefixes and suffixes.
 
 import os
-import re
-
-__default_makefile = """# This file was generated automatically.
-
-#Current operating system.
-CURR_OS=
-
-#Suffix for an archive.
-ARCH_SUFF=
-
-#Suffix for an object file.
-OBJ_SUFF=
-
-#Suffix for an executable.
-EXEC_SUFF=
-
-#Removal command.
-RM=
-export"""
-
-def make_default() :
-    fd = os.open("defs.mk", os.O_CREAT | os.O_RDWR)
-    fp = os.fdopen(fd, "r+")
-    fp.write(__default_makefile)   
-    return fp 
+import re 
 
 def write_makefile(fs) :
     fs.seek(0);
@@ -44,7 +20,6 @@ def write_makefile(fs) :
         exec_suff = ''
         rm_command = 'rm -rf'
         
-    
     #Get the position of the start of the line.
     pos1 = fs.tell()
     x = None
@@ -101,29 +76,35 @@ def write_makefile(fs) :
             fs.write(rest)
             fs.seek(pos2)
             matches += 1    
-    if matches != 4 :
+    if matches != 5 :
         fs.close()
-        os.remove("defs.mk")
-        fs = make_default()
+        os.remove("local_build/defs.mk")
+        fs = init_defs()
         write_makefile(fs)
 
 
-def open_file():
+def init_defs():
     try :
-        defs_mk = open("defs.mk", "r+")
+        defs_mk = open("local_build/defs.mk", "r+")
     except FileNotFoundError :
-        defs_mk = make_default()
+        defs_copy = open("Default\ Files/defs.mk")
+        fd = os.open("local_build/defs.mk", os.O_CREAT | os.O_RDWR)
+        defs_mk = os.fdopen(fd, "r+")
+        defs_mk.write(defs_copy.read())
+        defs_copy.close()
     return defs_mk
 
-def init_buildspace():
+def init_paths():
     try :
-        paths = open("paths.mk", "r")
+        paths = open("local_build/paths.mk", "r")
     except FileNotFoundError :
         paths_copy = open("Default Files/paths.mk")
-        fd = os.open("paths.mk", os.O_CREAT | os.O_RDWR)
+        fd = os.open("local_build/paths.mk", os.O_CREAT | os.O_RDWR)
         paths = os.fdopen(fd, "r+")
         paths.write(paths_copy.read())
         paths_copy.close()
-defs_mk = open_file()
+    paths.close()
+defs_mk = init_defs()
+init_paths()
 write_makefile(defs_mk)
 defs_mk.close()

@@ -1,5 +1,5 @@
-include paths.mk
-include defs.mk
+include ./local_build/paths.mk
+include ./local_build/defs.mk
 
 TARGETS=$(ARCH_OBJS) $(SOURCES)
 ARCH_OBJS=./Memory/alloc$(OBJ_SUFF) ./Memory/contig$(OBJ_SUFF) ./Memory/free$(OBJ_SUFF) \
