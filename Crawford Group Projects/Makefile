@@ -1,9 +1,5 @@
-include ./local_build/paths.mk
-include ./local_build/defs.mk
-include targets.mk
 
-#This is the python command to use to initialize the build environment.
-PYTHON=python3
+PYTHON="C:/IntelPython3/python.exe"
 
 #Other commands
 CC=gcc
@@ -11,8 +7,12 @@ CC=gcc
 #This is the recipe to initialize the build environment. It works.
 .PHONY: init_makefile
 init_makefile:
-	$(PYTHON) ./generate_makefile.py
-	
+	@echo $(PYTHON)
+	$(PYTHON) generate_makefile.py
+
+-include ./local_build/paths.mk
+-include ./local_build/defs.mk
+include targets.mk	
 
 .PHONY: all
 all: $(TARGETS)
@@ -35,7 +35,7 @@ objs$(ARCH_SUFF): $(ARCH_OBJS)
 $(ARCH_OBJS): $(ARCH_OBJS:$(OBJ_SUFF)=.c)
 	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.c, $@) $(DEFINES) $(INCLUDES) 
 
-#Compiles fine. Now complete the command line.
+#This works.
 $(SOURCES): $(EXEC_DEPS)
 	$(CC) -o $(subst .c,$(EXEC_SUFF),$@) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
 	@echo $@

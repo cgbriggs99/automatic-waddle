@@ -78,6 +78,7 @@ def write_makefile(fs) :
             fs.seek(pos2)
             matches += 1    
     if matches != 4 :
+        print(matches)
         fs.close()
         os.remove("./local_build/defs.mk")
         fs = init_defs()
@@ -91,7 +92,7 @@ def init_defs():
         defs_copy = open("Default Files/defs.mk")
         fd = os.open("./local_build/defs.mk", os.O_CREAT | os.O_RDWR)
         defs_mk = os.fdopen(fd, "r+")
-        defs_mk.write(paths_copy.read())
+        defs_mk.write(defs_copy.read())
         defs_copy.close()
     return defs_mk
 
@@ -107,7 +108,7 @@ def init_paths():
     paths.close()
 
 if not os.path.exists("./local_build") :
-    os.mkdirs("./local_build")
+    os.mkdir("./local_build")
 defs_mk = init_defs()
 init_paths()
 write_makefile(defs_mk)

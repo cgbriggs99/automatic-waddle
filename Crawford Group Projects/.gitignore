@@ -16,3 +16,4 @@ mp2
 scf
 !*.c
 /local_build/**
+/Default/
