@@ -1,7 +1,7 @@
 
 #Suffix for an archive.
 ARCH_SUFF=.a
-ifeq $(OS),Windows_NT
+ifeq ($(OS),Windows_NT)
 OBJ_SUFF=.obj
 EXEC_SUFF=.exe
 RM=del /f
