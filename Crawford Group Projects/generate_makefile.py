@@ -91,7 +91,7 @@ def init_defs():
         defs_copy = open("Default Files/defs.mk")
         fd = os.open("./local_build/defs.mk", os.O_CREAT | os.O_RDWR)
         defs_mk = os.fdopen(fd, "r+")
-        defs_mk.write(paths_copy.read())
+        defs_mk.write(defs_copy.read())
         defs_copy.close()
     return defs_mk
 
