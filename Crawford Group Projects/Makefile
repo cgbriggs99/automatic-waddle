@@ -29,11 +29,11 @@ objs$(ARCH_SUFF): $(ARCH_OBJS)
 	
 #This works.
 $(ARCH_OBJS:$(OBJ_SUFF)=.c): 
-	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.c, $@)
+	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.c, $@) $(DEFINES) $(INCLUDES) 
 
 #Compiles fine. Now complete the command line.
 $(SOURCES): $(EXEC_DEPS)
-	$(CC) $@ $+ $(CFLAGS) $(LDFLAGS)
+	$(CC) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
 
 
 	

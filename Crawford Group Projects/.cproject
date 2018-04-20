@@ -37,7 +37,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Memory|Excited|Out of Core|Symmetry|DIIS|CCSD|MP2|SCF|Harmonics|Molecule|Input_Output|Calculations|Geometry" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="DIIS|SCF|Calculations|Symmetry|Input_Output|Windows_Linking|Harmonics|Molecule|Excited|MP2|Geometry|CCSD|Memory|Out of Core" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="CCSD"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Calculations"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="DIIS"/>
@@ -51,6 +51,7 @@
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Out of Core"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SCF"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Symmetry"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Windows_Linking"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

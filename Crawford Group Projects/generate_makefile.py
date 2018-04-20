@@ -114,6 +114,16 @@ def open_file():
     except FileNotFoundError :
         defs_mk = make_default()
     return defs_mk
+
+def init_buildspace():
+    try :
+        paths = open("paths.mk", "r")
+    except FileNotFoundError :
+        paths_copy = open("Default Files/paths.mk")
+        fd = os.open("paths.mk", os.O_CREAT | os.O_RDWR)
+        paths = os.fdopen(fd, "r+")
+        paths.write(paths_copy.read())
+        paths_copy.close()
 defs_mk = open_file()
 write_makefile(defs_mk)
 defs_mk.close()

@@ -21,8 +21,6 @@
  * concerns, or bugs.
  */
 
-#include "../lapack_local.h"
-
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
