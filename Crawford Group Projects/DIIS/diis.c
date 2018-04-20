@@ -15,6 +15,7 @@
 #include "../output.h"
 
 int main(int argc, char **argv) {
+	linkDLLs();
 	FILE *mol, *enuc, *s, *t, *v, *eri, *mux, *muy, *muz;
 	molecule_t *molec;
 
@@ -35,4 +36,5 @@ int main(int argc, char **argv) {
 	inputSCF(&molec, mol, enuc, s, t, v, eri, mux, muy, muz);
 
 	calculateSCFDIIS(molec);
+	unlinkDLLs();
 }
