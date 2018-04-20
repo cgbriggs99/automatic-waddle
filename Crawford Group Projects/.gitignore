@@ -8,3 +8,9 @@
 defs.mk
 paths.mk
 !Default Files/**
+ccsd
+diis
+geometry
+harmonics
+mp2
+scf
