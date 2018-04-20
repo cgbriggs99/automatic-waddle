@@ -1,13 +1,14 @@
 #This makefile is for the various paths and names specific to your computer.
 
 #Full names of the BLAS and LAPACK libraries.
-LAPACK_LIB_PATH=/usr/lib/x86_64-linux-gnu/lapack/liblapack.so
-BLAS_LIB_PATH=/usr/lib/x86_64-linux-gnu/blas/libblas.so
+LAPACK_LIB_PATH=/home/connor/lapack-Sandbox/lapack-final/lib/liblapack.so
+BLAS_LIB_PATH=/home/connor/lapack-Sandbox/lapack-final/lib/libblas.so
 LAPACKE_LIB_PATH=/home/connor/lapack-Sandbox/lapack-final/lib/liblapacke.so
 CBLAS_LIB_PATH=/home/connor/lapack-Sandbox/lapack-final/lib/libcblas.so
 
 #Library names
-OTHER_LIBS=libgfortran.so
+OTHER_LIBS=
+OTHER_FLAGS=-lgfortran -Xlinker -rpath=/home/connor/lapack-Sandbox/lapack-final/lib/
 
 #Header names and locations
 LAPACKE_HEADER_PATH=/home/connor/lapack-Sandbox/lapack-final/include

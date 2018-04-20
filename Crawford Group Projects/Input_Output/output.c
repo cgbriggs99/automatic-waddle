@@ -25,6 +25,9 @@ void printAngles(const molecule_t *molecule) {
 	for (int i = 0; i < molecule->num_atoms; i++) {
 		for (int j = 0; j < i; j++) {
 			for (int k = 0; k < j; k++) {
+				if(i == j || i == k || j == k) {
+					continue;
+				}
 				if (molecule->distances[i][k] > 4.0
 						|| molecule->distances[j][k] > 4.0) {
 					continue;
@@ -40,6 +43,10 @@ void printAngles(const molecule_t *molecule) {
 		for (int j = 0; j < i; j++) {
 			for (int k = 0; k < j; k++) {
 				for (int l = 0; l < k; l++) {
+					if(i == j || i == k || i == l || j == k || j == l
+										    || k == l) {
+						continue;
+					}
 					if (molecule->distances[i][k] > 4.0
 							|| molecule->distances[j][k] > 4.0
 							|| molecule->distances[k][l] > 4.0) {
@@ -57,6 +64,10 @@ void printAngles(const molecule_t *molecule) {
 		for (int j = 0; j < i; j++) {
 			for (int k = 0; k < j; k++) {
 				for (int l = 0; l < k; l++) {
+					if(i == j || i == k || i == l || j == k || j == l
+										    || k == l) {
+						continue;
+					}
 					if (molecule->distances[i][j] > 4.0
 							|| molecule->distances[j][k] > 4.0
 							|| molecule->distances[k][l] > 4.0) {
