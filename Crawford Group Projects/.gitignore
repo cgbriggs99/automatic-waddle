@@ -4,5 +4,5 @@
 *.dll
 *.so
 *.a
-*.out
+a.out
 paths.mk
