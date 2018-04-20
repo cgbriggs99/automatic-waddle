@@ -5,7 +5,6 @@
 *.so
 *.a
 *.out
-defs.mk
 paths.mk
 !Default Files/**
 ccsd

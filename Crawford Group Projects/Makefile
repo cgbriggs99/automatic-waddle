@@ -1,4 +1,8 @@
 
+include ./local_build/paths.mk
+include defs.mk
+include targets.mk
+
 PYTHON="C:/IntelPython3/python.exe"
 
 #Other commands
