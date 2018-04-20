@@ -15,4 +15,10 @@ LAPACKE_HEADER_PATH=
 LAPACKE_HEADER_NAME=
 CBLAS_HEADER_PATH=
 CBLAS_HEADER_NAME=
+
+#This is the python command to use to initialize the build environment.
+PYTHON=
+
+#Other commands
+CC=
 export
