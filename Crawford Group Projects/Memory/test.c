@@ -5,14 +5,12 @@
  *      Author: cgbri
  */
 
-#include <cblas.h>
 #include <math.h>
 #include "./mem_custom.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include <lapacke.h>
 
 int main(void) {
 	srand(clock());
