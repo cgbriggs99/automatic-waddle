@@ -21,6 +21,8 @@ all: $(TARGETS)
 .PHONY: clean
 clean:
 	$(RM) $(L1_REMOVE)
+	$(RM) *.o
+	$(RM) *.a
 
 #This works.
 .PHONY: purge
@@ -33,11 +35,14 @@ objs$(ARCH_SUFF): $(ARCH_OBJS)
 	
 #This works.
 $(ARCH_OBJS): $(ARCH_OBJS:$(OBJ_SUFF)=.c)
-	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.c, $@) $(DEFINES) $(INCLUDES) 
+	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.c, $@) $(CFLAGS) $(DEFINES) $(INCLUDES) 
 
 #This works.
 $(SOURCES): $(EXEC_DEPS)
 	$(CC) -o $(subst .c,$(EXEC_SUFF),$@) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
+
+$(EXECS): $(EXEC_DEPS)
+	$(CC) -o $@ $(subst $(EXEC_SUFF),.c,$@) $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
 	
 
 	

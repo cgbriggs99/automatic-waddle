@@ -56,6 +56,7 @@ static int dll_listify(char *str, char ***out) {
 			}
 			trim = 1;
 			str[i] = 0;
+
 			*out = realloc(*out, (count + 1) * sizeof(char *));
 			(*out)[count] = &(str[prev]);
 			prev = i + 1;

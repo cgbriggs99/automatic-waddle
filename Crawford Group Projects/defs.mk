@@ -1,4 +1,3 @@
-
 #Suffix for an archive.
 ARCH_SUFF=.a
 ifeq ($(OS),Windows_NT)

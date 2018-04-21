@@ -14,7 +14,13 @@
 
 void input(molecule_t **out, FILE *in) {
 	int num;
-	fscanf(in, "%d", &num);
+	if(in == stdin) {
+		int l = scanf("%d", &num);
+		printf("%d", l);
+		fflush(stdout);
+	} else {
+		fscanf(in, "%d", &num);
+	}
 
 	atom_t *atoms = calloc(num, sizeof(atom_t));
 
@@ -22,8 +28,13 @@ void input(molecule_t **out, FILE *in) {
 		double x;
 		atoms[i].charge = 0;
 		atoms[i].id = i;
-		fscanf(in, "%lf %lf %lf %lf", &x, &(atoms[i].pos[0]),
+		if(in == stdin) {
+			scanf("%lf %lf %lf %lf", &x, &(atoms[i].pos[0]),
 				&(atoms[i].pos[1]), &(atoms[i].pos[2]));
+		} else {
+			fscanf(in, "%lf %lf %lf %lf", &x, &(atoms[i].pos[0]),
+				&(atoms[i].pos[1]), &(atoms[i].pos[2]));
+		}
 		atoms[i].z = x;
 		atoms[i].mass = amu(atoms[i].z);
 	}
