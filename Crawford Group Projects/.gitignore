@@ -13,7 +13,7 @@ geometry
 harmonics
 mp2
 scf
-.cproject
+**.cproject**
 !*.c
 /local_build/**
 /Default/
