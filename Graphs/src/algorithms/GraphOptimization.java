@@ -34,6 +34,7 @@ public class GraphOptimization {
 		
 		force.x -= coulombConst * (p2.getData().x - p1.getData().x) / (dist * dist * dist);
 		force.y -= coulombConst * (p2.getData().y - p1.getData().y) / (dist * dist * dist);
+		return (force);
 	}
 
 }

@@ -8,14 +8,12 @@ PYTHON="C:/IntelPython3/python.exe"
 #Other commands
 CC=gcc
 
-#This is the recipe to initialize the build environment. It works.
-.PHONY: init_makefile
-init_makefile:
-	@echo $(PYTHON)
-	$(PYTHON) generate_makefile.py
-
 .PHONY: all
 all: $(TARGETS)
+
+.PHONY: rebuild
+rebuild:
+	$(MAKE) -B all
 
 #This works.
 .PHONY: clean
@@ -39,10 +37,10 @@ $(ARCH_OBJS): $(ARCH_OBJS:$(OBJ_SUFF)=.c)
 
 #This works.
 $(SOURCES): $(EXEC_DEPS)
-	$(CC) -o $(subst .c,$(EXEC_SUFF),$@) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
+	$(CC) -o $(patsubst ,,$(subst .c,$(EXEC_SUFF),$@)) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
 
-$(EXECS): $(EXEC_DEPS)
-	$(CC) -o $@ $(subst $(EXEC_SUFF),.c,$@) $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
+#$(EXECS): $(EXEC_DEPS)
+#	$(CC) -o $@ $(subst $(EXEC_SUFF),.c,$@) $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
 	
 
 	
