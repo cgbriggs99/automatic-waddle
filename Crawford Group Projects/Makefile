@@ -3,8 +3,6 @@ include ./local_build/paths.mk
 include defs.mk
 include targets.mk
 
-PYTHON="C:/IntelPython3/python.exe"
-
 #Other commands
 CC=gcc
 
@@ -14,6 +12,15 @@ all: $(TARGETS)
 .PHONY: rebuild
 rebuild:
 	$(MAKE) -B all
+<<<<<<< HEAD
+=======
+	
+.PHONY: subtest
+subtest:
+	@echo $(SOURCES)
+	@echo $(shell cd)
+	@echo $(shell stringmod.bat $(SOURCES))
+>>>>>>> refs/remotes/origin/master
 
 #This works.
 .PHONY: clean
