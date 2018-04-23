@@ -1,4 +1,4 @@
-include ./local_build/paths.mk
+include paths.mk
 include defs.mk
 
 ifeq ($(OS),Windows_NT)
