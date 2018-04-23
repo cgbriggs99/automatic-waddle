@@ -2,7 +2,7 @@ include ./local_build/paths.mk
 include defs.mk
 
 ifeq ($(OS),Windows_NT)
-TARGETS=objs$(ARCH_SUFF) $(EXECS)
+TARGETS=objs$(ARCH_SUFF) $(SOURCES)
 CFLAGS=-g
 else
 TARGETS=objs$(ARCH_SUFF) $(SOURCES)

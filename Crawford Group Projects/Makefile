@@ -12,15 +12,7 @@ all: $(TARGETS)
 .PHONY: rebuild
 rebuild:
 	$(MAKE) -B all
-<<<<<<< HEAD
-=======
-	
-.PHONY: subtest
-subtest:
-	@echo $(SOURCES)
-	@echo $(shell cd)
-	@echo $(shell stringmod.bat $(SOURCES))
->>>>>>> refs/remotes/origin/master
+
 
 #This works.
 .PHONY: clean
@@ -32,7 +24,10 @@ clean:
 #This works.
 .PHONY: purge
 purge:
+	$(MAKE) clean
 	$(RM) $(L2_REMOVE)
+	$(RM) *.exe
+	$(RM) *.dll
 	
 #This works.
 objs$(ARCH_SUFF): $(ARCH_OBJS)
@@ -44,7 +39,7 @@ $(ARCH_OBJS): $(ARCH_OBJS:$(OBJ_SUFF)=.c)
 
 #This works.
 $(SOURCES): $(EXEC_DEPS)
-	$(CC) -o $(patsubst ,,$(subst .c,$(EXEC_SUFF),$@)) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
+	$(CC) -o $(notdir $(subst .c,$(EXEC_SUFF),$@)) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
 
 #$(EXECS): $(EXEC_DEPS)
 #	$(CC) -o $@ $(subst $(EXEC_SUFF),.c,$@) $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
