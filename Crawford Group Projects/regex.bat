@@ -20,23 +20,35 @@ call :strlen len reg
 set count=0
 set brackets=false
 set notbrackets=false
+set escaped=false
 set lower=a b c d e f g h i j k l m n o p q r s t u v w x y z
 set upper=A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
 set number=0 1 2 3 4 5 6 7 8 9 0
 
 set tail=%reg%
 
-for /l %i in (0, 1, %len%) do (
-	if %i==0 (
+for /l %%i in (0, 1, %len%) do (
+	if %%i==0 (
 		set lastchar=start
 	) else (
-		set lastchar = %curr%
+		set lastchar=%curr%
 	)
 	set curr=%tail:~0,1%
 	set tail=%tail:~1,-1%
 	
 	if %brackets%==true (
-		
+		set compiled_%%i=!compiled_%%i! curr
+	)
+	if %notbrackets%=true (
+		set compiled_%%i=!compiled_%%i! curr
+	)
+	if %curr%==^[ (
+		set brackets=true
+	)
+	if %curr%==^^ (
+		if %lastchar%==^[ (
+			set brackets=false
+			set notbrackets=true
 	
 	
 
