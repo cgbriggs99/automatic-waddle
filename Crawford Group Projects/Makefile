@@ -3,19 +3,21 @@ include ./local_build/paths.mk
 include defs.mk
 include targets.mk
 
-PYTHON="C:/IntelPython3/python.exe"
-
 #Other commands
 CC=gcc
 
-#This is the recipe to initialize the build environment. It works.
-.PHONY: init_makefile
-init_makefile:
-	@echo $(PYTHON)
-	$(PYTHON) generate_makefile.py
-
 .PHONY: all
 all: $(TARGETS)
+
+.PHONY: rebuild
+rebuild:
+	$(MAKE) -B all
+	
+.PHONY: subtest
+subtest:
+	@echo $(SOURCES)
+	@echo $(shell cd)
+	@echo $(shell stringmod.bat $(SOURCES))
 
 #This works.
 .PHONY: clean
