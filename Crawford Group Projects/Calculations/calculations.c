@@ -31,6 +31,16 @@
 #include "../molecule.h"
 #include "../output.h"
 
+static int compare_double(const void *a, const void *b) {
+	if(*((double *) a) > *((double *) b)) {
+		return (1);
+	} else if(*((double *)a) < *((double *) b)) {
+		return (-1);
+	} else {
+		return (0);
+	}
+}
+
 static double dotProd(double x1, double y1, double z1, double x2, double y2,
                       double z2) {
 	return (x1 * x2 + y1 * y2 + z1 * z2);
@@ -327,18 +337,16 @@ void eigensHessian(molecule_t *molecule) {
 		memcpy(mat + n * i, molecule->hessian[i], n * sizeof(double));
 	}
 
-	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'N', n, mat, n, r, im, vl, 1, vr, 1);
+	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'N', n, mat, n, r, im, vl, n, vr, n);
 
 	for(int i = 0; i < n; i++) {
 		molecule->hessian_eigs[i] = r[i];
 	}
+	qsort(molecule->hessian_eigs, n, sizeof(double), compare_double);
 
 	free(mat);
 	free(im);
 	free(r);
-#ifdef OPTIMIZE
-	free(rot);
-#endif
 }
 
 /*
