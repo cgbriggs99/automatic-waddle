@@ -1,0 +1,26 @@
+For educational use only. Do not reproduce this code, executables, binaries, etc. without the express permission of the
+author, Connor Briggs, and all sources. May be reproduced under "fair use." 
+
+	Bibliography
+
+cgbriggs99. (2017). ProgrammingProjects: C++ Programming Tutorial in Chemistry. 
+	Retrieved from https://github.com/cgbriggs99/ProgrammingProjects (Original work published September 5, 2017)
+
+Eigenvalue algorithm. (2017, May 29). In Wikipedia. 
+	Retrieved from https://en.wikipedia.org/w/index.php?title=Eigenvalue_algorithm&oldid=782886104
+
+List of Elements of the Periodic Table - Sorted by Atomic number. (n.d.). 
+	Retrieved September 12, 2017, from https://www.science.co.il/elements/
+
+Planck constant. (2017, September 7). In Wikipedia. 
+	Retrieved from https://en.wikipedia.org/w/index.php?title=Planck_constant&oldid=799418862
+
+ProgrammingProjects: C++ Programming Tutorial in Chemistry. (2017). CrawfordGroup. 
+	Retrieved from https://github.com/CrawfordGroup/ProgrammingProjects (Original work published September 25, 2016)
+
+Rotational spectroscopy. (2017a, September 10). In Wikipedia. 
+	Retrieved from https://en.wikipedia.org/w/index.php?title=Rotational_spectroscopy&oldid=799918560
+
+Speed of light. (2017, September 12). In Wikipedia. 
+	Retrieved from https://en.wikipedia.org/w/index.php?title=Speed_of_light&oldid=800317357
+
