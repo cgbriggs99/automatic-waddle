@@ -13,6 +13,14 @@ ARCH_OBJS=./Memory/alloc$(OBJ_SUFF) ./Memory/contig$(OBJ_SUFF) ./Memory/free$(OB
 ./Calculations/calculations$(OBJ_SUFF) ./Calculations/calculations2$(OBJ_SUFF) ./Calculations/calculations3$(OBJ_SUFF) \
 ./Calculations/calculations4$(OBJ_SUFF) ./Windows_Linking/linker$(OBJ_SUFF)
 
+ARCH_CPP_OBJS=./Molecule/molecule_cpp$(OBJ_SUFF) ./Molecule/molecule_data_cpp$(OBJ_SUFF) ./Arrays/arrays$(OBJ_SUFF)
+
+ARCH_C= ./Memory/alloc.c ./Memory/contig.c ./Memory/free.c ./Molecule/molecule.c ./Input_Output/input.c ./Input_Output/output.c \
+./Calculations/calculations.c ./Calculations/calculations2.c ./Calculations/calculations3.c ./Calculations/calculations4.c \
+./Windows_Linking/linker.c
+
+ARCH_CPP=./Molecule/molecule_cpp.cpp ./Molecule/molecule_data_cpp.cpp ./Arrays/arrays.cpp
+
 
 EXECS=./Geometry/geometry$(EXEC_SUFF) ./CCSD/ccsd$(EXEC_SUFF) ./DIIS/diis$(EXEC_SUFF) ./Harmonics/harmonics$(EXEC_SUFF)\
 ./MP2/mp2$(EXEC_SUFF) ./SCF/scf$(EXEC_SUFF)

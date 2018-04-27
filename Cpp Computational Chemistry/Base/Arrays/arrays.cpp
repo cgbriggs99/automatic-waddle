@@ -5,7 +5,7 @@
  *      Author: Connor
  */
 
-#include "../../Base/arrays.hpp"
+#include "../../arrays.hpp"
 
 #include <stdlib.h>
 #include <stdio.h>

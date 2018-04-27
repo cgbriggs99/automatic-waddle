@@ -27,15 +27,15 @@ purge:
 	$(RM) *.exe
 	$(RM) *.dll
 	
-chem$(ARCH_SUFF): $(CHEM_SOURCES)
-	$(AR) -cr $@ $(subst .cpp,$(OBJ_SUFF),$(filter $(CHEM_SOURCES),$^))
-base$(ARCH_SUFF): $(BASE_SOURCES)
-	$(AR) -cr $@ $(subst .cpp,$(OBJ_SUFF),$(filter $(BASE_SOURCES),$^))
+chem$(ARCH_SUFF): $(CHEM_OBJECTS)
+	$(AR) -cr $@ $^
+base$(ARCH_SUFF): $(BASE_OBJECTS)
+	$(AR) -cr $@ $^
 	
 	
-$(BASE_OBJECTS):
+$(BASE_OBJECTS) $(CHEM_OBJECTS): $(BASE_SOURCES) $(CHEM_SOURCES)
 	$(CC) $(CFLAGS) -c -o $@ $(subst $(OBJ_SUFF),.cpp,$@) $(DEFINES) $(INCLUDES)
 	
-$(BASE_SOURCES):
-	$(CC) $(CFLAGS) -c -o $(subst .cpp,$(OBJ_SUFF),$@) $@ $(DEFINES) $(INCLUDES)
+$(BASE_SOURCES) $(CHEM_SOURCES):
+#	$(CC) $(CFLAGS) -c -o $(subst .cpp,$(OBJ_SUFF),$@) $@ $(DEFINES) $(INCLUDES)
 	

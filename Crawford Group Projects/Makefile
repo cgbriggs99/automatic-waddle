@@ -31,14 +31,20 @@ purge:
 	
 #This works.
 objs$(ARCH_SUFF): $(ARCH_OBJS)
+	@echo Linking $@
 	$(AR) -cr $@ $?
 	
-#This works.
-$(ARCH_OBJS): $(ARCH_OBJS:$(OBJ_SUFF)=.c)
-	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.c, $@) $(CFLAGS) $(DEFINES) $(INCLUDES) 
+$(ARCH_CPP_OBJS): $(ARCH_CPP)
+	@echo Building $@
+	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.cpp, $@) $(CFLAGS) $(DEFINES) $(INCLUDES)
+	
+$(filter-out $(ARCH_CPP_OBJS),$(ARCH_OBJS)): $(ARCH_C) 
+	@echo Building $@
+	$(CC) -c -o $@ $(subst $(OBJ_SUFF),.c, $@) $(CFLAGS) $(DEFINES) $(INCLUDES)
 
 #This works.
 $(SOURCES): $(EXEC_DEPS)
+	@echo Building $@
 	$(CC) -o $(notdir $(subst .c,$(EXEC_SUFF),$@)) $@ $+ $(CFLAGS) $(LDFLAGS) $(DEFINES) $(INCLUDES)
 
 #$(EXECS): $(EXEC_DEPS)

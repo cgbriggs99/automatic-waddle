@@ -5,7 +5,7 @@
  *      Author: Connor
  */
 
-#include "../molecule.hpp"
+#include "../../molecule.hpp"
 
 #ifdef __ELF__
 #include <sys/mman.h>
@@ -18,11 +18,11 @@
 #include <fcntl.h>
 #include <math.h>
 
-//Replace with later C++ headers.
-#include "../input.h"
-#include "../output.h"
-#include "../linker.h"
-#include "../calculations.h"
+#include "../../input.hpp"
+#include "../../output.hpp"
+#include "../../linker.hpp"
+#include "../../calculations.hpp"
+#include "../../arrays.hpp"
 
 using namespace std;
 using namespace compchem;

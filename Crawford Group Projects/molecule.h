@@ -8,6 +8,11 @@
 #ifndef MOLECULE_H_
 #define MOLECULE_H_
 
+#ifdef __cplusplus
+namespace compchem {
+//extern "C" {
+#endif
+
 #define STRINGIFY(arg) #arg
 #define STRINGIFY1(arg) STRINGIFY(arg)
 #define PRINT printf("\nDebug in " __FILE__ " at " STRINGIFY1(__LINE__)\
@@ -22,7 +27,7 @@ typedef struct {
 	double true_charge;	//True charge of the atom.
 } atom_t;
 
-typedef struct {
+typedef struct molecule_t{
 	atom_t *atoms;	// A list of atoms in the molecule.
 	int num_atoms;	// The number of atoms in the molecule.
 	double **distances;	// Distances between atom pairs.
@@ -91,6 +96,9 @@ typedef struct {
 
 } molecule_t;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 extern int TEI(int mu, int nu, int lam, int sig);
 
 /*
@@ -112,4 +120,8 @@ extern int valence(int z);
 
 extern int orbitals(int z);
 
+#ifdef __cplusplus
+}
+}
+#endif
 #endif /* MOLECULE_H_ */

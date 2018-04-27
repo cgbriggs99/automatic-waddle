@@ -10,6 +10,11 @@
 
 #include "./molecule.h"
 
+#ifdef __cplusplus
+extern "C" {
+struct molecule_t;
+#endif
+
 //Defines constants that will be necessary for calculations.
 #define PLANCK 3.9905e31 //amu angstrom^2 / s
 #define C 2997924580000000000	//angstrom / s
@@ -129,6 +134,10 @@ extern void calculateCCSDTEnergy(molecule_t *molecule);
  * Use DIIS to help SCF
  */
 extern void calculateSCFDIIS(molecule_t *molecule);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif /* CALCULATIONS_H_ */
