@@ -1,3 +1,5 @@
+include base.mk
+include chem.mk
 include paths.mk
 include defs.mk
 

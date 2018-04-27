@@ -27,9 +27,9 @@ purge:
 	$(RM) *.exe
 	$(RM) *.dll
 	
-chem$(ARCH_SUFF): $(CHEM_OBJECTS) $(CHEM_SOURCES)
+chem$(ARCH_SUFF): $(CHEM_SOURCES)
 	$(AR) -cr $@ $(subst .cpp,$(OBJ_SUFF),$(filter $(CHEM_SOURCES),$^))
-base$(ARCH_SUFF): $(BASE_OBJECTS) $(BASE_SOURCES)
+base$(ARCH_SUFF): $(BASE_SOURCES)
 	$(AR) -cr $@ $(subst .cpp,$(OBJ_SUFF),$(filter $(BASE_SOURCES),$^))
 	
 	
