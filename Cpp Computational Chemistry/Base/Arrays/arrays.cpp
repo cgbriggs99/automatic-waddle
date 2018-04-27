@@ -52,11 +52,15 @@ Array<T>::Array(T *data, int dim, ...) {
 }
 
 template<class T>
-Array<T>::Array(Array<T> &arr) {
-	this->data = arr.data;
+Array<T>::Array(const Array<T> &arr) {
 	this->dim = arr.dim;
 	this->total = arr.total;
+	this->data = new T[this->total];
 	this->sizes = (size_t *) calloc(this->dim, sizeof(size_t));
+	for(int i = 0; i < this->total; i++) {
+		T temp = arr.data[i];
+		this->data[i] = temp;
+	}
 	for(int i = 0; i < this->dim; i++) {
 		this->sizes[i] = arr.sizes[i];
 	}
@@ -87,7 +91,7 @@ Array<T> *Array<T>::toArray(T *data, int dim, ...) {
 }
 
 template<class T>
-T *Array<T>::operator()(int ind1, ...) {
+T &Array<T>::operator()(int ind1, ...) {
 	va_list lst;
 	va_start(lst, ind1);
 
@@ -101,7 +105,25 @@ T *Array<T>::operator()(int ind1, ...) {
 		subsc += this->sizes[i] * curr;
 	}
 
-	return (&(this->data[subsc]));
+	return (this->data[subsc]);
 }
+
+//template<class T>
+//const T &Array<T>::operator()(int ind1, ...) const {
+//	va_list lst;
+//	va_start(lst, ind1);
+//
+//	size_t subsc = ind1 * this->sizes[this->dim - 1];
+//
+//	for(int i = this->dim - 2; i >= 0; i--) {
+//		int curr = va_arg(lst, int);
+//		if(curr >= this->sizes[i] || curr < 0) {
+//			throw ArrayIndexOutOfBoundsException();
+//		}
+//		subsc += this->sizes[i] * curr;
+//	}
+//
+//	return (this->data[subsc]);
+//}
 
 

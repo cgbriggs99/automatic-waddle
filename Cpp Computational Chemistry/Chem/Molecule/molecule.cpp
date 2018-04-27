@@ -26,9 +26,8 @@
 using namespace std;
 using namespace compchem;
 
-Atom::Atom(int num, double x, double y, double z) {
+Atom::Atom(int num, double x, double y, double z): pos(3) {
 	this->charge = 0;
-	this->id = 0;
 	this->mass = amu(num);
 	this->num = num;
 	this->pos[0] = x;
@@ -37,7 +36,7 @@ Atom::Atom(int num, double x, double y, double z) {
 	this->true_charge = 0;
 }
 
-Molecule::Molecule(Atom *atoms, int num) {
+Molecule::Molecule(Atom *atoms, int num, double scf_eps) : dipole(3), inertial_moments(2,3,3), principle_moments(1,3), rotational_constants(1,3) {
 	long total_mem = 0;
 	this->atoms = atoms;
 	this->numatoms = num;
@@ -51,6 +50,8 @@ Molecule::Molecule(Atom *atoms, int num) {
 		this->orbitals += compchem::orbitals(atoms[i].num);
 		this->total_mass += atoms[i].mass;
 	}
+
+	this->scf_eps = scf_eps;
 
 	total_mem = 0;
 	total_mem += this->numatoms * this->numatoms;
@@ -87,6 +88,7 @@ Molecule::Molecule(Atom *atoms, int num) {
 	total_mem += 4 * this->orbitals * this->orbitals;
 	total_mem += 16 * this->orbitals * this->orbitals * this->orbitals
 				* this->orbitals;
+	total_mem += this->hessian_size;
 
 	if (total_mem * sizeof(double) >= 2147483647L) {
 #ifdef __ELF__
@@ -107,7 +109,7 @@ Molecule::Molecule(Atom *atoms, int num) {
 			*_spin_two_electron, *_orthogonal, *_orthogonal_t,
 			*_orthogonal_eigvs, *_fock, *_density, *_molecular_orbitals, *_mux,
 			*_muy, *_muz, *_spin_fock, *_t1_amplitudes, *_t2_amplitudes,
-			*_inter_f, *_inter_w, *_tpe1, *_tpe2;
+			*_inter_f, *_inter_w, *_tpe1, *_tpe2, *_vibrations;
 
 	occupied = electrons / 2;
 	long shift = 0;
@@ -200,6 +202,8 @@ Molecule::Molecule(Atom *atoms, int num) {
 			* this->orbitals * this->orbitals * this->orbitals];
 	shift += 16 * this->orbitals * this->orbitals * this->orbitals
 			* this->orbitals;
+	_vibrations = new (this->memory + shift) double[this->hessian_size];
+	shift += this->hessian_size;
 
 	//Geometry data.
 	distances = new Array<double>(_distances, 2, numatoms, numatoms);
@@ -260,6 +264,8 @@ Molecule::Molecule(Atom *atoms, int num) {
 	tpe1 = new Array<double>(_tpe1, 2, 2 * orbitals, 2 * orbitals);
 	tpe2 = new Array<double>(_tpe2, 4, 2 * orbitals, 2 * orbitals, 2 * orbitals,
 			2 * orbitals);
+
+	vibrations = new Array<double>(_vibrations, 1, this->hessian_size);
 
 }
 

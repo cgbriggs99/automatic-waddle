@@ -19,14 +19,37 @@ using namespace compchem;
 class Atom {
 	friend class Molecule;
 private:
-	double pos[3];
+	Vector<double> pos;
 	double mass;
 	double true_charge;
 	int num;
 	int charge;
-	int id;
 public:
 	Atom(int num, double x, double y, double z);
+
+	int getCharge() const {
+		return charge;
+	}
+
+	double getMass() const {
+		return mass;
+	}
+
+	int getNum() const {
+		return num;
+	}
+
+	const array::Vector<double>& getPos() const {
+		return pos;
+	}
+
+	double getTrueCharge() const {
+		return true_charge;
+	}
+
+	void setTrueCharge(double trueCharge) {
+		true_charge = trueCharge;
+	}
 };
 
 class Molecule {
@@ -44,6 +67,8 @@ private:
 	int electrons;
 	int orbitals;
 
+	double scf_eps;
+
 	//Atom data.
 	Atom *atoms;
 	int numatoms;
@@ -54,10 +79,9 @@ private:
 	Array<double> *angles;
 	Array<double> *plane_angles;
 	Array<double> *torsion_angles;
-	double inertial_moments[3][3];	//TODO needs a getter.
-	double principle_moments[3];
-	double rotational_constants[3];
-	double center_of_mass[3];
+	Array<double> inertial_moments;	//TODO needs a getter.
+	Array<double> principle_moments;
+	Array<double> rotational_constants;
 	typedef enum {
 		SPHERICAL_TOP, LINEAR, SYMMETRIC, ASYMMETRIC
 	} rotor_t;
@@ -67,6 +91,7 @@ private:
 	Array<double> *hessian;
 	int hessian_size;
 	Array<double> *hessian_eigs;
+	Array<double> *vibrations;
 
 	//Energies.
 	double enuc;
@@ -92,7 +117,7 @@ private:
 	Array<double> *density;
 	Array<double> *molecular_orbitals;
 	Array<double> *mux, *muy, *muz;
-	double dipole[3];
+	Vector<double> dipole;
 	Array<double> *spin_fock;
 
 	//CCSD intermediates;
@@ -134,7 +159,7 @@ private:
 
 	void computeDLExcited();
 public:
-	Molecule(Atom *atoms, int num);
+	Molecule(Atom *atoms, int num, double scf_eps = 0.0000001);
 	~Molecule();
 
 	const Array<double>* getAngles() const {
@@ -157,7 +182,7 @@ public:
 		return density;
 	}
 
-	const double* getDipole() const {
+	const Vector<double> &getDipole() const {
 		return dipole;
 	}
 
@@ -273,11 +298,11 @@ public:
 		return plane_angles;
 	}
 
-	const double* getPrincipleMoments() const {
+	const Array<double>& getPrincipleMoments() const {
 		return principle_moments;
 	}
 
-	const double* getRotationalConstants() const {
+	const Array<double>& getRotationalConstants() const {
 		return rotational_constants;
 	}
 
