@@ -5,6 +5,8 @@
  *      Author: cgbri
  */
 
-
+#include "../../input.hpp"
+#include "../../arrays.hpp"
+#include "../../molecule.hpp"
 
 

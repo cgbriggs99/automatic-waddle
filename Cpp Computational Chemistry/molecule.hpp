@@ -14,6 +14,7 @@
 namespace compchem {
 
 using namespace array;
+using namespace compchem;
 
 class Atom {
 	friend class Molecule;
@@ -29,7 +30,11 @@ public:
 };
 
 class Molecule {
-public:
+private:
+	friend void compchem::input(compchem::Molecule **, FILE *);
+	friend void compchem::inputHessian(Molecule **, FILE *);
+	friend void compchem::inputSCF(Molecule **, FILE *, FILE *, FILE *, FILE *,
+			FILE *, FILE *, FILE *, FILE *, FILE *);
 	typedef int filedesc;
 	filedesc blocks;
 	char *memory;
@@ -49,13 +54,14 @@ public:
 	Array<double> *angles;
 	Array<double> *plane_angles;
 	Array<double> *torsion_angles;
-	double inertial_moments[3][3];
+	double inertial_moments[3][3];	//TODO needs a getter.
 	double principle_moments[3];
 	double rotational_constants[3];
 	double center_of_mass[3];
-	enum {
+	typedef enum {
 		SPHERICAL_TOP, LINEAR, SYMMETRIC, ASYMMETRIC
-	} rotor;
+	} rotor_t;
+	rotor_t rotor;
 
 	//Harmonic data.
 	Array<double> *hessian;
@@ -97,8 +103,227 @@ public:
 	Array<double> *tpe1;
 	Array<double> *tpe2;
 
+	/*
+	 * Calculation methods.
+	 */
+	void computeDists();
+	void computeAngles();
+	void computePlaneAngles();
+	void computeTorsionAngles();
+	void translateCOM();
+	void momentsOfInertia();
+	void rotations();
+
+	void harmonics();
+
+	void computeSCF();
+
+	void computeMP2();
+
+	void computeCCSD();
+
+	void computeCCSDT();
+
+	void computeSCF_DIIS();
+
+	void computeSCF_Symm();
+
+	void computeCCSD_DIIS();
+
+	void computeExcited();
+
+	void computeDLExcited();
+public:
 	Molecule(Atom *atoms, int num);
 	~Molecule();
+
+	const Array<double>* getAngles() const {
+		return angles;
+	}
+
+	const Atom* getAtoms() const {
+		return atoms;
+	}
+
+	const Array<double>* getAttraction() const {
+		return attraction;
+	}
+
+	filedesc getBlocks() const {
+		return blocks;
+	}
+
+	const Array<double>* getDensity() const {
+		return density;
+	}
+
+	const double* getDipole() const {
+		return dipole;
+	}
+
+	const Array<double>* getDistances() const {
+		return distances;
+	}
+
+	int getElectrons() const {
+		return electrons;
+	}
+
+	double getEnuc() const {
+		return enuc;
+	}
+
+	const Array<double>* getFock() const {
+		return fock;
+	}
+
+	const Array<double>* getHamiltonian() const {
+		return hamiltonian;
+	}
+
+	const Array<double>* getHessian() const {
+		return hessian;
+	}
+
+	const Array<double>* getHessianEigs() const {
+		return hessian_eigs;
+	}
+
+	int getHessianSize() const {
+		return hessian_size;
+	}
+
+	const Array<double>* getInterF() const {
+		return inter_f;
+	}
+
+	const Array<double>* getInterW() const {
+		return inter_w;
+	}
+
+	const Array<double>* getKinetic() const {
+		return kinetic;
+	}
+
+	char* getMemory() const {
+		return memory;
+	}
+
+	const Array<double>* getMoTwoElectron() const {
+		return mo_two_electron;
+	}
+
+	const Array<double>* getMolecularEnergies() const {
+		return molecular_energies;
+	}
+
+	const Array<double>* getMolecularOrbitals() const {
+		return molecular_orbitals;
+	}
+
+	double getMp2Correction() const {
+		return mp2_correction;
+	}
+
+	double getMp2Energy() const {
+		return mp2_energy;
+	}
+
+	const Array<double>* getMux() const {
+		return mux;
+	}
+
+	const Array<double>* getMuy() const {
+		return muy;
+	}
+
+	const Array<double>* getMuz() const {
+		return muz;
+	}
+
+	int getNumatoms() const {
+		return numatoms;
+	}
+
+	int getOccupied() const {
+		return occupied;
+	}
+
+	int getOrbitals() const {
+		return orbitals;
+	}
+
+	const Array<double>* getOrthogonal() const {
+		return orthogonal;
+	}
+
+	const Array<double>* getOrthogonalEigvs() const {
+		return orthogonal_eigvs;
+	}
+
+	const Array<double>* getOrthogonalT() const {
+		return orthogonal_t;
+	}
+
+	const Array<double>* getOverlap() const {
+		return overlap;
+	}
+
+	const Array<double>* getPlaneAngles() const {
+		return plane_angles;
+	}
+
+	const double* getPrincipleMoments() const {
+		return principle_moments;
+	}
+
+	const double* getRotationalConstants() const {
+		return rotational_constants;
+	}
+
+	rotor_t getRotor() const {
+		return rotor;
+	}
+
+	double getScfEnergy() const {
+		return scf_energy;
+	}
+
+	const Array<double>* getSpinFock() const {
+		return spin_fock;
+	}
+
+	const Array<double>* getSpinTwoElectron() const {
+		return spin_two_electron;
+	}
+
+	const Array<double>* getT1Amplitudes() const {
+		return t1_amplitudes;
+	}
+
+	const Array<double>* getT2Amplitudes() const {
+		return t2_amplitudes;
+	}
+
+	const Array<double>* getTorsionAngles() const {
+		return torsion_angles;
+	}
+
+	double getTotalMass() const {
+		return total_mass;
+	}
+
+	const Array<double>* getTpe1() const {
+		return tpe1;
+	}
+
+	const Array<double>* getTpe2() const {
+		return tpe2;
+	}
+
+	const Array<double>* getTwoElectron() const {
+		return two_electron;
+	}
 };
 
 extern int TEI(int mu, int nu, int lam, int sig);

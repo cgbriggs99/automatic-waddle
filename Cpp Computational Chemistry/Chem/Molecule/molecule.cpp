@@ -5,7 +5,6 @@
  *      Author: Connor
  */
 
-#include "../../molecule.hpp"
 
 #ifdef __ELF__
 #include <sys/mman.h>
@@ -21,8 +20,8 @@
 #include "../../input.hpp"
 #include "../../output.hpp"
 #include "../../linker.hpp"
-#include "../../calculations.hpp"
 #include "../../arrays.hpp"
+#include "../../molecule.hpp"
 
 using namespace std;
 using namespace compchem;
