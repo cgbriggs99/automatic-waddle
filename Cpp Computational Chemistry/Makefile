@@ -28,8 +28,9 @@ purge:
 	$(RM) *.dll
 	
 chem$(ARCH_SUFF): $(CHEM_OBJECTS) $(CHEM_SOURCES)
+	$(AR) -cr $@ $(subst .cpp,$(OBJ_SUFF),$(filter $(CHEM_SOURCES),$^))
 base$(ARCH_SUFF): $(BASE_OBJECTS) $(BASE_SOURCES)
-	$(AR) -cr $@ $(subst .cpp,$(OBJ_SUFF),$^)
+	$(AR) -cr $@ $(subst .cpp,$(OBJ_SUFF),$(filter $(BASE_SOURCES),$^))
 	
 	
 $(BASE_OBJECTS):
