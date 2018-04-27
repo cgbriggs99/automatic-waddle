@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../linker.h"
+#include "../linker.hpp"
 #ifndef __ELF__
 #include <windows.h>
 #endif
@@ -20,7 +20,7 @@ static char dll_list[] = DLLS;
 #endif
 
 static int dll_listify(char *str, char ***out) {
-	*out = calloc(0, sizeof(char *));
+	*out = (char **) calloc(0, sizeof(char *));
 	int prev = 0;
 	int i = 0;
 	int count = 0;
@@ -57,7 +57,7 @@ static int dll_listify(char *str, char ***out) {
 			trim = 1;
 			str[i] = 0;
 
-			*out = realloc(*out, (count + 1) * sizeof(char *));
+			*out = (char **) realloc(*out, (count + 1) * sizeof(char *));
 			(*out)[count] = &(str[prev]);
 			prev = i + 1;
 			count++;
@@ -68,7 +68,7 @@ static int dll_listify(char *str, char ***out) {
 		}
 		i++;
 	}
-	*out = realloc(*out, (count + 1) * sizeof(char *));
+	*out = (char **) realloc(*out, (count + 1) * sizeof(char *));
 	(*out)[count] = &(str[prev]);
 	count++;
 	return (count);
@@ -79,7 +79,7 @@ void linkDLLs(void) {
 	int argc;
 	char **argv;
 	argc = dll_listify(dll_list, &argv);
-	handles = calloc(argc, sizeof(HINSTANCE *));
+	handles = (HINSTANCE *) calloc(argc, sizeof(HINSTANCE));
 	nhandles = argc;
 	for(int i = 0; i < argc; i++) {
 		handles[i] = LoadLibrary(argv[i]);

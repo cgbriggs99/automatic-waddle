@@ -34,7 +34,7 @@
 static int compare_double(const void *a, const void *b) {
 	if(*((double *) a) > *((double *) b)) {
 		return (1);
-	} else if(*((double *)a) < *((double *) b)) {
+	} else if(*((double *) a) < *((double *) b)) {
 		return (-1);
 	} else {
 		return (0);
@@ -314,7 +314,7 @@ static int compare(const void *a, const void *b) {
 }
 
 void eigensHessian(molecule_t *molecule) {
-#define EPS 0.000000001
+#define EPS 0.0000000001
 	/*
 	 * Calculate eigenvalues.
 	 * Step 1: Decompose matrix into QR form.
@@ -818,7 +818,8 @@ void findFockPrint(molecule_t *molecule) {
 		}
 		rms = sqrt(rms);
 
-		printf("%.17f\t%.17f\t%.17f\t%.17f\n", elec, energy, fabs(elast - energy), rms);
+		printf("%.17f\t%.17f\t%.17f\t%.17f\n", elec, energy,
+		    fabs(elast - energy), rms);
 		count++;
 	} while(count < 100 && (fabs(elast - energy) > EPS && rms > DEL));
 

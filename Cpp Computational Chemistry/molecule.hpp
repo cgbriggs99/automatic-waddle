@@ -8,8 +8,8 @@
 #ifndef MOLECULE_HPP_
 #define MOLECULE_HPP_
 
-#include "arrays.hpp"
-#include "input.hpp"
+#include "Base/arrays.hpp"
+#include "Base/input.hpp"
 
 namespace compchem {
 
