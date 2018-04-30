@@ -10,7 +10,7 @@ else
 CFLAGS=-g3 -ggdb -Og
 endif
 
-TARGETS=base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF)
+TARGETS=base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF) ./Main/main$(OBJ_SUFF) $(EXECS)
 
 
 DLLS=$(LAPACKE_LIB_PATH) $(CBLAS_LIB_PATH) $(LAPACK_LIB_PATH) $(BLAS_LIB_PATH) $(OTHER_LIBS)

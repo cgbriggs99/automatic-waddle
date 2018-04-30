@@ -232,7 +232,7 @@ Molecule::Molecule(Atom *atoms, int num, double scf_eps) : dipole(3), inertial_m
 	kinetic = new Array<double>(_kinetic, 2, orbitals, orbitals);
 	attraction = new Array<double>(_attraction, 2, orbitals, orbitals);
 	hamiltonian = new Array<double>(_hamiltonian, 2, orbitals, orbitals);
-	two_electron = new Array<double>(_two_electron, 4, orbitals, orbitals,
+	two_electron = new TEArray<double>(_two_electron, 4, orbitals, orbitals,
 			orbitals, orbitals);
 	mo_two_electron = new Array<double>(_mo_two_electron, 4, orbitals, orbitals,
 			orbitals, orbitals);
@@ -335,4 +335,3 @@ Molecule::~Molecule() {
 	}
 	delete[] atoms;
 }
-

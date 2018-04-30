@@ -33,7 +33,7 @@ class SizeMismatchException : std::exception {
 
 template<class T>
 class Array {
-private:
+protected:
 	size_t dim;
 	size_t total;
 	bool freeOnDelete;

@@ -79,7 +79,7 @@
                     					
                     <sourceEntries>
                         						
-                        <entry excluding="Chem/Output|Output|Chem/Molecule|IO|Calculations|Molecule" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+                        <entry excluding="Main|Chem/Output|Output|Chem/Molecule|IO|Calculations|Molecule" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Calculations"/>
                         						
@@ -88,6 +88,8 @@
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Chem/Output"/>
                         						
                         <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="IO"/>
+                        						
+                        <entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Main"/>
                         					
                     </sourceEntries>
                     				
