@@ -5,6 +5,8 @@
  *      Author: Connor
  */
 
+#ifndef MOLECULE_CPP__
+#define MOLECULE_CPP__
 
 #ifdef __ELF__
 #include <sys/mman.h>
@@ -17,18 +19,14 @@
 #include <fcntl.h>
 #include <math.h>
 
-#include "../../input.hpp"
-#include "../../output.hpp"
-#include "../../linker.hpp"
-#include "../../arrays.hpp"
-#include "../../molecule.hpp"
+#include "../../compchem.hpp"
 
 using namespace std;
 using namespace compchem;
 
-Atom::Atom(int num, double x, double y, double z): pos(3) {
+compchem::Atom::Atom(int num, double x, double y, double z): pos(3) {
 	this->charge = 0;
-	this->mass = amu(num);
+	this->mass = compchem::amu(num);
 	this->num = num;
 	this->pos[0] = x;
 	this->pos[1] = y;
@@ -36,10 +34,11 @@ Atom::Atom(int num, double x, double y, double z): pos(3) {
 	this->true_charge = 0;
 }
 
-Molecule::Molecule(Atom *atoms, int num, double scf_eps) : dipole(3), inertial_moments(2,3,3), principle_moments(1,3), rotational_constants(1,3) {
+compchem::Molecule::Molecule(Atom *atoms, int num, double scf_eps) : center_of_mass(3), dipole(3), inertial_moments(2,3,3), principle_moments(1,3), rotational_constants(1,3) {
 	long total_mem = 0;
 	this->atoms = atoms;
 	this->numatoms = num;
+	this->hessian_size = 3 * num;
 
 	this->electrons = 0;
 	this->orbitals = 0;
@@ -65,8 +64,8 @@ Molecule::Molecule(Atom *atoms, int num, double scf_eps) : dipole(3), inertial_m
 	total_mem += this->orbitals * this->orbitals;
 	total_mem += this->orbitals * this->orbitals;
 	total_mem += this->orbitals * this->orbitals;
-	total_mem += this->orbitals * this->orbitals * this->orbitals * this->orbitals;
-	total_mem += this->orbitals * this->orbitals * this->orbitals * this->orbitals;
+	total_mem += TEI(this->orbitals, this->orbitals, this->orbitals, this->orbitals);
+	total_mem += TEI(this->orbitals, this->orbitals, this->orbitals, this->orbitals);
 	total_mem += 16 * this->orbitals * this->orbitals * this->orbitals
 				* this->orbitals;
 	total_mem += this->orbitals * this->orbitals;
@@ -115,102 +114,102 @@ Molecule::Molecule(Atom *atoms, int num, double scf_eps) : dipole(3), inertial_m
 	long shift = 0;
 
 	_distances = new (this->memory) double[this->numatoms * this->numatoms];
-	shift += this->numatoms * this->numatoms;
+	shift += this->numatoms * this->numatoms * sizeof(double);
 	_angles = new (this->memory + shift) double[this->numatoms * this->numatoms
 			* this->numatoms];
-	shift += this->numatoms * this->numatoms * this->numatoms;
+	shift += this->numatoms * this->numatoms * this->numatoms * sizeof(double);
 	_plane_angles = new (this->memory + shift) double[this->numatoms
 			* this->numatoms * this->numatoms * this->numatoms];
-	shift += this->numatoms * this->numatoms * this->numatoms * this->numatoms;
+	shift += this->numatoms * this->numatoms * this->numatoms * this->numatoms * sizeof(double);
 	_torsion_angles = new (this->memory + shift) double[this->numatoms
 			* this->numatoms * this->numatoms * this->numatoms];
-	shift += this->numatoms * this->numatoms * this->numatoms * this->numatoms;
+	shift += this->numatoms * this->numatoms * this->numatoms * this->numatoms * sizeof(double);
 	_hessian = new (this->memory + shift) double[9 * this->numatoms
 			* this->numatoms];
-	shift += 9 * this->numatoms * this->numatoms;
+	shift += 9 * this->numatoms * this->numatoms * sizeof(double);
 	_hessian_eigs = new (this->memory + shift) double[3 * this->numatoms];
-	shift += 3 * this->numatoms;
+	shift += 3 * this->numatoms * sizeof(double);
 	_molecular_energies = new (this->memory + shift) double[this->orbitals
 			* this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_overlap =
 			new (this->memory + shift) double[this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_kinetic =
 			new (this->memory + shift) double[this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_attraction = new (this->memory + shift) double[this->orbitals
 			* this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_hamiltonian = new (this->memory + shift) double[this->orbitals
 			* this->orbitals];
-	shift += this->orbitals * this->orbitals;
-	_two_electron = new (this->memory + shift) double[this->orbitals
-			* this->orbitals * this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals * this->orbitals * this->orbitals;
-	_mo_two_electron = new (this->memory + shift) double[this->orbitals
-			* this->orbitals * this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals * this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
+
+	//TODO Redo the size of this so it is not using the full size.
+	_two_electron = new (this->memory + shift) double[TEI(this->orbitals, this->orbitals, this->orbitals, this->orbitals)];
+	shift += TEI(this->orbitals, this->orbitals, this->orbitals, this->orbitals) * sizeof(double);
+	_mo_two_electron = new (this->memory + shift) double[TEI(this->orbitals, this->orbitals, this->orbitals, this->orbitals)];
+	shift += TEI(this->orbitals, this->orbitals, this->orbitals, this->orbitals) * sizeof(double);
 	_spin_two_electron = new (this->memory + shift) double[16 * this->orbitals
 			* this->orbitals * this->orbitals * this->orbitals];
 	shift += 16 * this->orbitals * this->orbitals * this->orbitals
-			* this->orbitals;
+			* this->orbitals * sizeof(double);
 	_orthogonal = new (this->memory + shift) double[this->orbitals
 			* this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_orthogonal_t = new (this->memory + shift) double[this->orbitals
 			* this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_orthogonal_eigvs = new (this->memory + shift) double[this->orbitals
 			* this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_fock = new (this->memory + shift) double[this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_density =
 			new (this->memory + shift) double[this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_molecular_orbitals = new (this->memory + shift) double[this->orbitals
 			* this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_mux = new (this->memory + shift) double[this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_muy = new (this->memory + shift) double[this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_muz = new (this->memory + shift) double[this->orbitals * this->orbitals];
-	shift += this->orbitals * this->orbitals;
+	shift += this->orbitals * this->orbitals * sizeof(double);
 	_spin_fock = new (this->memory + shift) double[4 * this->orbitals
 			* this->orbitals];
-	shift += 4 * this->orbitals * this->orbitals;
+	shift += 4 * this->orbitals * this->orbitals * sizeof(double);
 	_t1_amplitudes = new (this->memory + shift) double[4 * this->orbitals
 			* this->orbitals];
-	shift += 4 * this->orbitals * this->orbitals;
+	shift += 4 * this->orbitals * this->orbitals * sizeof(double);
 	_t2_amplitudes = new (this->memory + shift) double[16 * this->orbitals
 			* this->orbitals * this->orbitals * this->orbitals];
 	shift += 16 * this->orbitals * this->orbitals * this->orbitals
-			* this->orbitals;
+			* this->orbitals * sizeof(double);
 	_inter_f = new (this->memory + shift) double[4 * this->orbitals
 			* this->orbitals];
-	shift += 4 * this->orbitals * this->orbitals;
+	shift += 4 * this->orbitals * this->orbitals * sizeof(double);
 	_inter_w = new (this->memory + shift) double[16 * this->orbitals
 			* this->orbitals * this->orbitals * this->orbitals];
 	shift += 16 * this->orbitals * this->orbitals * this->orbitals
-			* this->orbitals;
+			* this->orbitals * sizeof(double);
 	_tpe1 = new (this->memory + shift) double[4 * this->orbitals
 			* this->orbitals];
-	shift += 4 * this->orbitals * this->orbitals;
+	shift += 4 * this->orbitals * this->orbitals * sizeof(double);
 	_tpe2 = new (this->memory + shift) double[16 * this->orbitals
 			* this->orbitals * this->orbitals * this->orbitals];
 	shift += 16 * this->orbitals * this->orbitals * this->orbitals
-			* this->orbitals;
-	_vibrations = new (this->memory + shift) double[this->hessian_size];
-	shift += this->hessian_size;
+			* this->orbitals * sizeof(double);
+	_vibrations = new (this->memory + shift) double[this->hessian_size * this->hessian_size];
+	shift += this->hessian_size * sizeof(double);
 
 	//Geometry data.
-	distances = new Array<double>(_distances, 2, numatoms, numatoms);
-	angles = new Array<double>(_angles, 3, numatoms, numatoms, numatoms);
-	plane_angles = new Array<double>(_plane_angles, 4, numatoms, numatoms,
+	distances = new array::Array<double>(_distances, 2, numatoms, numatoms);
+	angles = new array::Array<double>(_angles, 3, numatoms, numatoms, numatoms);
+	plane_angles = new array::Array<double>(_plane_angles, 4, numatoms, numatoms,
 			numatoms, numatoms);
-	torsion_angles = new Array<double>(_torsion_angles, 4, numatoms, numatoms,
+	torsion_angles = new array::Array<double>(_torsion_angles, 4, numatoms, numatoms,
 			numatoms, numatoms);
 	rotor = ASYMMETRIC;
 
@@ -234,7 +233,7 @@ Molecule::Molecule(Atom *atoms, int num, double scf_eps) : dipole(3), inertial_m
 	hamiltonian = new Array<double>(_hamiltonian, 2, orbitals, orbitals);
 	two_electron = new TEArray<double>(_two_electron, 4, orbitals, orbitals,
 			orbitals, orbitals);
-	mo_two_electron = new Array<double>(_mo_two_electron, 4, orbitals, orbitals,
+	mo_two_electron = new TEArray<double>(_mo_two_electron, 4, orbitals, orbitals,
 			orbitals, orbitals);
 	spin_two_electron = new Array<double>(_spin_two_electron, 4, 2 * orbitals,
 			2 * orbitals, 2 * orbitals, 2 * orbitals);
@@ -266,20 +265,9 @@ Molecule::Molecule(Atom *atoms, int num, double scf_eps) : dipole(3), inertial_m
 			2 * orbitals);
 
 	vibrations = new Array<double>(_vibrations, 1, this->hessian_size);
-
 }
 
 Molecule::~Molecule() {
-	//Counts.
-	int occupied;
-	int electrons;
-	int orbitals;
-
-	//Atom data.
-	Atom *atoms;
-	int numatoms;
-	double total_mass;
-
 	//Geometry data.
 	delete distances;
 	delete angles;
@@ -322,6 +310,11 @@ Molecule::~Molecule() {
 	delete tpe1;
 	delete tpe2;
 
+	for(int i = 0; i < this->numatoms; i++) {
+		delete (atoms + i);
+	}
+	free(atoms);
+
 	if(blocks == -2) {
 		free(memory);
 	} else if(blocks == -1) {
@@ -333,5 +326,7 @@ Molecule::~Molecule() {
 		//Close stuff.
 #endif
 	}
-	delete[] atoms;
 }
+
+
+#endif

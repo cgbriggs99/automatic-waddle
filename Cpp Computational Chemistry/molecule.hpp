@@ -8,16 +8,19 @@
 #ifndef MOLECULE_HPP_
 #define MOLECULE_HPP_
 
-#include "arrays.hpp"
-#include "input.hpp"
+#include <stdio.h>
+#include <stdarg.h>
+#include "compchem.hpp"
 
 namespace compchem {
-
 using namespace array;
 using namespace compchem;
 
+class Molecule;
+
 class Atom {
 	friend class Molecule;
+	friend void compchem::input(compchem::Molecule **, FILE *);
 private:
 	Vector<double> pos;
 	double mass;
@@ -25,25 +28,32 @@ private:
 	int num;
 	int charge;
 public:
+	Atom() :
+			pos(3) {
+		this->mass = 0;
+		this->true_charge = 0;
+		this->num = 0;
+		this->charge = 0;
+	}
 	Atom(int num, double x, double y, double z);
 
-	int getCharge() const {
+	int getCharge() {
 		return (charge);
 	}
 
-	double getMass() const {
+	double getMass() {
 		return (mass);
 	}
 
-	int getNum() const {
+	int getNum() {
 		return (num);
 	}
 
-	const array::Vector<double>& getPos() const {
+	array::Vector<double>& getPos() {
 		return (pos);
 	}
 
-	double getTrueCharge() const {
+	double getTrueCharge() {
 		return (true_charge);
 	}
 
@@ -53,20 +63,27 @@ public:
 };
 
 template<class T>
-class TEArray : Array<T> {
+class TEArray: Array<T> {
+private:
 public:
 	TEArray(int dim, ...);
 	TEArray(T *data, int dim, ...);	//Does not copy. Simply sets the data pointer.
 	TEArray(const Array<T> &arr);	//Does copy.
 	~TEArray();
 	T &operator()(int i, int j, int k, int l);
+
+	T *getArray();
 };
 
 class Molecule {
+
+public:
+	typedef enum {
+		SPHERICAL_TOP, LINEAR, SYMMETRIC, ASYMMETRIC
+	} rotor_t;
 private:
-	friend void compchem::input(compchem::Molecule **, FILE *);
-	friend void compchem::inputHessian(Molecule **, FILE *);
-	friend void compchem::inputSCF(Molecule **, FILE *, FILE *, FILE *, FILE *,
+	friend void inputHessian(Molecule **, FILE *);
+	friend void inputSCF(Molecule **, FILE *, FILE *, FILE *, FILE *,
 			FILE *, FILE *, FILE *, FILE *, FILE *);
 	typedef int filedesc;
 	filedesc blocks;
@@ -89,12 +106,11 @@ private:
 	Array<double> *angles;
 	Array<double> *plane_angles;
 	Array<double> *torsion_angles;
+	Vector<double> center_of_mass;
 	Array<double> inertial_moments;	//TODO needs a getter.
 	Array<double> principle_moments;
 	Array<double> rotational_constants;
-	typedef enum {
-		SPHERICAL_TOP, LINEAR, SYMMETRIC, ASYMMETRIC
-	} rotor_t;
+
 	rotor_t rotor;
 
 	//Harmonic data.
@@ -116,7 +132,7 @@ private:
 	Array<double> *attraction;
 	Array<double> *hamiltonian;
 	TEArray<double> *two_electron;
-	Array<double> *mo_two_electron;
+	TEArray<double> *mo_two_electron;
 	Array<double> *spin_two_electron;
 
 	//Important matrices.
@@ -137,7 +153,7 @@ private:
 	Array<double> *inter_w;
 	Array<double> *tpe1;
 	Array<double> *tpe2;
-
+public:
 	/*
 	 * Calculation methods.
 	 */
@@ -151,8 +167,9 @@ private:
 
 	void harmonics();
 
-	void computeSCF();
+	void computeSCF(bool print = false);
 
+	void computeMOTEI();
 	void computeMP2();
 
 	void computeCCSD();
@@ -168,207 +185,218 @@ private:
 	void computeExcited();
 
 	void computeDLExcited();
-public:
-	Molecule(Atom *atoms, int num, double scf_eps = 0.0000001);
+
+	Molecule(Atom *atoms, int num, double scf_eps = 0.000000000001);
 	~Molecule();
 
-	const Array<double>* getAngles() const {
+	Array<double>* getAngles() {
 		return (angles);
 	}
 
-	const Atom* getAtoms() const {
+	Atom* getAtoms() {
 		return (atoms);
 	}
 
-	const Array<double>* getAttraction() const {
+	Array<double>* getAttraction() {
 		return (attraction);
 	}
 
-	filedesc getBlocks() const {
+	filedesc getBlocks() {
 		return (blocks);
 	}
 
-	const Array<double>* getDensity() const {
+	Array<double>* getDensity() {
 		return (density);
 	}
 
-	const Vector<double> &getDipole() const {
+	Vector<double> &getDipole() {
 		return (dipole);
 	}
 
-	const Array<double>* getDistances() const {
+	Array<double>* getDistances() {
 		return (distances);
 	}
 
-	int getElectrons() const {
+	int getElectrons() {
 		return (electrons);
 	}
 
-	double getEnuc() const {
+	double getEnuc() {
 		return (enuc);
 	}
 
-	const Array<double>* getFock() const {
+	Array<double>* getFock() {
 		return (fock);
 	}
 
-	const Array<double>* getHamiltonian() const {
+	Array<double>* getHamiltonian() {
 		return (hamiltonian);
 	}
 
-	const Array<double>* getHessian() const {
+	Array<double>* getHessian() {
 		return (hessian);
 	}
 
-	const Array<double>* getHessianEigs() const {
+	Array<double>* getHessianEigs() {
 		return (hessian_eigs);
 	}
 
-	int getHessianSize() const {
+	int getHessianSize() {
 		return (hessian_size);
 	}
 
-	const Array<double>* getInterF() const {
+	Array<double>* getInterF() {
 		return (inter_f);
 	}
 
-	const Array<double>* getInterW() const {
+	Array<double>* getInterW() {
 		return (inter_w);
 	}
 
-	const Array<double>* getKinetic() const {
+	Array<double>* getKinetic() {
 		return (kinetic);
 	}
 
-	char* getMemory() const {
+	char* getMemory() {
 		return (memory);
 	}
 
-	const Array<double>* getMoTwoElectron() const {
+	TEArray<double>* getMoTwoElectron() {
 		return (mo_two_electron);
 	}
 
-	const Array<double>* getMolecularEnergies() const {
+	Array<double>* getMolecularEnergies() {
 		return (molecular_energies);
 	}
 
-	const Array<double>* getMolecularOrbitals() const {
+	Array<double>* getMolecularOrbitals() {
 		return (molecular_orbitals);
 	}
 
-	double getMp2Correction() const {
+	double getMp2Correction() {
 		return (mp2_correction);
 	}
 
-	double getMp2Energy() const {
+	double getMp2Energy() {
 		return (mp2_energy);
 	}
 
-	const Array<double>* getMux() const {
+	Array<double>* getMux() {
 		return (mux);
 	}
 
-	const Array<double>* getMuy() const {
+	Array<double>* getMuy() {
 		return (muy);
 	}
 
-	const Array<double>* getMuz() const {
+	Array<double>* getMuz() {
 		return (muz);
 	}
 
-	int getNumatoms() const {
+	int getNumatoms() {
 		return (numatoms);
 	}
 
-	int getOccupied() const {
+	int getOccupied() {
 		return (occupied);
 	}
 
-	int getOrbitals() const {
+	int getOrbitals() {
 		return (orbitals);
 	}
 
-	const Array<double>* getOrthogonal() const {
+	Array<double>* getOrthogonal() {
 		return (orthogonal);
 	}
 
-	const Array<double>* getOrthogonalEigvs() const {
+	Array<double>* getOrthogonalEigvs() {
 		return (orthogonal_eigvs);
 	}
 
-	const Array<double>* getOrthogonalT() const {
+	Array<double>* getOrthogonalT() {
 		return (orthogonal_t);
 	}
 
-	const Array<double>* getOverlap() const {
+	Array<double>* getOverlap() {
 		return (overlap);
 	}
 
-	const Array<double>* getPlaneAngles() const {
+	Array<double>* getPlaneAngles() {
 		return (plane_angles);
 	}
 
-	const Array<double>& getPrincipleMoments() const {
+	Array<double>& getPrincipleMoments() {
 		return (principle_moments);
 	}
 
-	const Array<double>& getRotationalConstants() const {
+	Array<double>& getRotationalConstants() {
 		return (rotational_constants);
 	}
 
-	rotor_t getRotor() const {
+	rotor_t getRotor() {
 		return (rotor);
 	}
 
-	double getScfEnergy() const {
+	double getScfEnergy() {
 		return (scf_energy);
 	}
 
-	const Array<double>* getSpinFock() const {
+	Array<double>* getSpinFock() {
 		return (spin_fock);
 	}
 
-	const Array<double>* getSpinTwoElectron() const {
+	Array<double>* getSpinTwoElectron() {
 		return (spin_two_electron);
 	}
 
-	const Array<double>* getT1Amplitudes() const {
+	Array<double>* getT1Amplitudes() {
 		return (t1_amplitudes);
 	}
 
-	const Array<double>* getT2Amplitudes() const {
+	Array<double>* getT2Amplitudes() {
 		return (t2_amplitudes);
 	}
 
-	const Array<double>* getTorsionAngles() const {
+	Array<double>* getTorsionAngles() {
 		return (torsion_angles);
 	}
 
-	double getTotalMass() const {
+	double getTotalMass() {
 		return (total_mass);
 	}
 
-	const Array<double>* getTpe1() const {
+	Array<double>* getTpe1() {
 		return (tpe1);
 	}
 
-	const Array<double>* getTpe2() const {
+	Array<double>* getTpe2() {
 		return (tpe2);
 	}
 
-	const TEArray<double>* getTwoElectron() const {
+	TEArray<double>* getTwoElectron() {
 		return (two_electron);
+	}
+
+	void setEnuc(double enuc) {
+		this->enuc = enuc;
+	}
+
+	Vector<double>& getCenterOfMass() {
+		return (center_of_mass);
+	}
+
+	Array<double>& getInertialMoments() {
+		return (inertial_moments);
 	}
 };
 
-extern int TEI(int mu, int nu, int lam, int sig);
+int TEI(int mu, int nu, int lam, int sig);
 
-extern double amu(int z);
+double amu(int z);
 
-extern int valence(int z);
+int valence(int z);
 
-extern int orbitals(int z);
-
+int orbitals(int z);
 
 template<class T>
 TEArray<T>::TEArray(int dim, ...) {
@@ -379,7 +407,7 @@ TEArray<T>::TEArray(int dim, ...) {
 	this->sizes = (size_t *) calloc(dim, sizeof(size_t));
 	this->total = 1;
 
-	for(int i = 0; i < dim; i++) {
+	for (int i = 0; i < dim; i++) {
 		this->sizes[i] = va_arg(lst, int);
 		this->total *= this->sizes[i];
 	}
@@ -397,7 +425,7 @@ TEArray<T>::TEArray(T *data, int dim, ...) {
 	this->sizes = (size_t *) calloc(dim, sizeof(size_t));
 	this->total = 1;
 
-	for(int i = 0; i < dim; i++) {
+	for (int i = 0; i < dim; i++) {
 		this->sizes[i] = va_arg(lst, int);
 		this->total *= this->sizes[i];
 	}
@@ -412,11 +440,11 @@ TEArray<T>::TEArray(const Array<T> &arr) {
 	this->total = arr.total;
 	this->data = new T[this->total];
 	this->sizes = (size_t *) calloc(this->dim, sizeof(size_t));
-	for(int i = 0; i < this->total; i++) {
+	for (int i = 0; i < this->total; i++) {
 		T temp = arr.data[i];
 		this->data[i] = temp;
 	}
-	for(int i = 0; i < this->dim; i++) {
+	for (int i = 0; i < this->dim; i++) {
 		this->sizes[i] = arr.sizes[i];
 	}
 	this->freeOnDelete = false;
@@ -425,40 +453,45 @@ TEArray<T>::TEArray(const Array<T> &arr) {
 template<class T>
 TEArray<T>::~TEArray() {
 	free(this->sizes);
-	if(this->freeOnDelete) {
+	if (this->freeOnDelete) {
 		delete [] this->data;
 	}
+	free(this->sizes);
 }
 
 template<class T>
 T &TEArray<T>::operator()(int i, int j, int k, int l) {
-
-	size_t subsc;
-
-	if(i < j) {
-		int temp = i;
-		i = j;
-		j = temp;
+	size_t ij, kl, subsc;
+	if (i < j) {
+		ij = ((long) j * (long) (j + 1)) / 2 + i;
+	} else {
+		ij = ((long) i * (long) (i + 1)) / 2 + j;
 	}
 
-	if(k < l) {
-		int temp = k;
-		k = l;
-		l = temp;
+	if (k < l) {
+		kl = ((long) l * (long) (l + 1)) / 2 + k;
+	} else {
+		kl = ((long) k * (long) (k + 1)) / 2 + l;
 	}
 
-	size_t ij = ((long) i * (long) (i + 1)) / 2 + j;
-	size_t kl = ((long) k * (long) (k + 1)) / 2 + l;
 
-	if(ij < kl) {
-		int temp = ij;
-		ij = kl;
-		kl = temp;
+	if (ij < kl) {
+		subsc = ((long) kl * (long) (kl + 1)) / 2 + ij;
+	} else {
+		subsc = ((long) ij * (long) (ij + 1)) / 2 + kl;
 	}
-	size_t subsc = ((long) ij * (long) (ij + 1)) / 2 + kl;
+	if(subsc > this->total) {
+		throw array::ArrayIndexOutOfBoundsException();
+	}
 
-	return (this->data[subsc]);
+	return (*&(this->data[subsc]));
 }
+
+template<class T>
+T *TEArray<T>::getArray() {
+	return (this->data);
+}
+
 }
 
 #endif /* MOLECULE_HPP_ */

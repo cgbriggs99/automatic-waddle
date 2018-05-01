@@ -14,5 +14,5 @@ EXEC_SUFF=
 #Removal command
 RM=rm -rf
 endif
-CC=gcc
+CC=g++
 export

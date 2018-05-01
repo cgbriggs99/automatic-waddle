@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <fcntl.h>
 #include "../calculations.h"
 #include "../input.h"
 #include "../output.h"
@@ -35,6 +36,9 @@ static int compared(const void *a, const void *b) {
 
 void calculateMP2(molecule_t *molecule) {
 	int orb = molecule->orbitals;
+
+	printArray("Energies", molecule->molecular_eigs, molecule->orbitals, molecule->orbitals);
+	printArray("Orbitals", molecule->molecular_orbitals, molecule->orbitals, molecule->orbitals);
 
 	memset(molecule->mo_two_electron, 0,
 	    TEI(orb, orb, orb, orb) * sizeof(double));
@@ -64,6 +68,21 @@ void calculateMP2(molecule_t *molecule) {
 			}
 		}
 	}
+
+	int fd = open("mo_two_electron.dat", O_CREAT | O_RDWR, 0777);
+	close(fd);
+	FILE *fp = fopen("mo_two_electron.dat", "r+");
+
+	for(int i = 0; i < molecule->orbitals; i++) {
+		for(int j = 0; j <= i; j++) {
+			for(int k = 0; k <= i; k++) {
+				for(int l = 0; l <= ((i == k)? j: k); l++) {
+					fprintf(fp, "%d\t%d\t%d\t%d\t%.7f\n", i, j, k, l, molecule->mo_two_electron[TEI(i, j, k, l)]);
+				}
+			}
+		}
+	}
+	fclose(fp);
 
 	molecule->mp2_energy = 0;
 

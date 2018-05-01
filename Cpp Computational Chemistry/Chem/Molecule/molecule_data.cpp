@@ -4,7 +4,8 @@
  *  Created on: Apr 25, 2018
  *      Author: Connor
  */
-
+#ifndef MOLECULE_DATA_CPP__
+#define MOLECULE_DATA_CPP__
 #ifdef __ELF__
 #include <sys/mman.h>
 #else
@@ -16,11 +17,7 @@
 #include <fcntl.h>
 #include <math.h>
 
-//Replace with later C++ headers.
-#include "../../input.hpp"
-#include "../../output.hpp"
-#include "../../linker.hpp"
-#include "../../molecule.hpp"
+#include "../../compchem.hpp"
 
 using namespace std;
 using namespace compchem;
@@ -33,7 +30,7 @@ static int index_(int i, int j) {
 	}
 }
 
-int TEI(int mu, int nu, int lam, int sig) {
+int compchem::TEI(int mu, int nu, int lam, int sig) {
 	int ij, kl;
 
 	ij = index_(mu, nu);
@@ -43,7 +40,7 @@ int TEI(int mu, int nu, int lam, int sig) {
 }
 
 
-double amu(int z) {
+double compchem::amu(int z) {
 	/*
 	 * Atomic mass data retrieved from the Israel Science and Technology Directory.
 	 * Due to copyright restrictions, this code is for educational use only.
@@ -71,7 +68,7 @@ double amu(int z) {
 	return (amus[z - 1]);
 }
 
-int valence(int z) {
+int compchem::valence(int z) {
 	int i = 1, s = z;
 	;
 	while(s > (i / 2) * (i / 2) * 2) {
@@ -80,7 +77,7 @@ int valence(int z) {
 	return (s);
 }
 
-int orbitals(int z) {
+int compchem::orbitals(int z) {
 	//Deal with exceptions.
 	switch(z) {
 	case 64:
@@ -141,3 +138,5 @@ int orbitals(int z) {
 	}
 	return (0);
 }
+
+#endif

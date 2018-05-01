@@ -12,14 +12,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "../input.hpp"
-#include "../output.hpp"
-#include "../arrays.hpp"
-#include "../molecule.hpp"
+#include "compchem.hpp"
+
 
 namespace compchem {
+using namespace compchem;
 
-void initialize(Molecule **mol, int argc, char **argv);
+void initialize(class Molecule **mol, int argc, char **argv);
 
 }
 

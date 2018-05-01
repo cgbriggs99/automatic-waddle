@@ -5,48 +5,51 @@
  *      Author: cgbri
  */
 
-#include "../../input.hpp"
-#include "../../arrays.hpp"
-#include "../../molecule.hpp"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "../../compchem.hpp"
 
 using namespace compchem;
 
 /*
  * Get input from a file and place it in out.
  */
-void input(compchem::Molecule **out, FILE *fp) {
+void compchem::input(class Molecule **out, FILE *fp) {
 	int num;
 	fscanf(fp, "%d", &num);
 
-	Atom *atoms = new Atom[num];
+	//Because C++ does not like having friends for some reason.
+	Atom *atoms = (Atom *) calloc(num, sizeof(compchem::Atom));
+	size_t offset = 0;
 
-	for (int i = 0; i < num; i++) {
-		double x;
-		atoms[i].charge = 0;
-		fscanf(fp, "%lf %lf %lf %lf", &x, &(atoms[i].pos[0]),
-		       &(atoms[i].pos[1]), &(atoms[i].pos[2]));
-		atoms[i].num = x;
-		atoms[i].mass = amu(atoms[i].num);
+	for(int i = 0; i < num; i++) {
+		double n, x, y, z;
+		fscanf(fp, "%lf %lf %lf %lf", &n, &x, &y, &z);
+		Atom *atom = new (atoms + offset) Atom((int) n, x, y, z);
+		offset += 1;
 	}
-	*out = new Molecule(atoms, num);
+
+	*out = new compchem::Molecule(atoms, num);
+	return;
 }
 
 /*
  * Read in Hessian data.
  */
-void inputHessian(compchem::Molecule **out, FILE *fp) {
+void compchem::inputHessian(class Molecule **out, FILE *fp) {
 	int check;
 	fscanf(fp, "%d", &check);
-	if (check != (*out)->numatoms) {
+	if (check != (*out)->getNumatoms()) {
 		perror("Error: Invalid sizes.\n");
 		exit(-1);
 	}
 
-	for (int i = 0; i < (*out)->hessian_size; i++) {
-		for (int j = 0; j < (*out)->numatoms; j++) {
-			fscanf(fp, "%lf %lf %lf", &((*out)->hessian[i][3 * j]),
-				&((*out)->hessian[i][3 * j + 1]),
-				&((*out)->hessian[i][3 * j + 2]));
+	for (int i = 0; i < (*out)->getHessianSize(); i++) {
+		for (int j = 0; j < (*out)->getNumatoms(); j++) {
+			fscanf(fp, "%lf %lf %lf", &((*((*out)->getHessian()))(i, 3 * j)),
+				&((*((*out)->getHessian()))(i, 3 * j + 1)),
+				&((*((*out)->getHessian()))(i, 3 * j + 2)));
 		}
 	}
 	(*out)->harmonics();
@@ -55,54 +58,71 @@ void inputHessian(compchem::Molecule **out, FILE *fp) {
 /*
  * Read data from various files for the SCF procedure.
  */
-void inputSCF(compchem::Molecule **out, FILE *mol, FILE *enuc, FILE *s, FILE *t,
-		FILE *v, FILE *eri, FILE *mux, FILE *muy, FILE *muz) {
-	input(out, mol);
-	fscanf(enuc, "%lf", &((*out)->enuc));
+void compchem::inputSCF(class Molecule **out, FILE *mol, FILE *enuc, FILE *s, FILE *t,
+		FILE *v, FILE *eri, FILE *mux, FILE *muy, FILE *muz, FILE *hessian) {
+	compchem::input(&(*out), &(*mol));
+	double e;
+	fscanf(enuc, "%lf", &e);
+	(*out)->setEnuc(e);
 
 	int i, j, k, l;
 	while (!feof(s)) {
 		fscanf(s, "%d %d", &i, &j);
 		i--;
 		j--;
-		fscanf(s, "%lf", &((*((*out)->overlap))(i, j)));
-		(*((*out)->overlap))(j, i) = (*((*out)->overlap))(i, j);
+		fscanf(s, "%lf", &((*((*out)->getOverlap()))(i, j)));
+		(*((*out)->getOverlap()))(j, i) = (*((*out)->getOverlap()))(i, j);
 	}
 
 	while (!feof(t)) {
 		fscanf(t, "%d %d", &i, &j);
 		i--;
 		j--;
-		fscanf(t, "%lf", &((*((*out)->kinetic))(i, j)));
-		(*((*out)->kinetic))(j, i) = (*((*out)->kinetic))(i, j);
+		fscanf(t, "%lf", &((*((*out)->getKinetic()))(i, j)));
+		(*((*out)->getKinetic()))(j, i) = (*((*out)->getKinetic()))(i, j);
 	}
 
 	while (!feof(v)) {
 		fscanf(v, "%d %d", &i, &j);
 		i--;
 		j--;
-		fscanf(v, "%lf", &((*((*out)->attraction))(i, j)));
-		(*((*out)->attraction))(j, i) = (*((*out)->attraction))(i, j);
+		fscanf(v, "%lf", &((*((*out)->getAttraction()))(i, j)));
+		(*((*out)->getAttraction()))(j, i) = (*((*out)->getAttraction()))(i, j);
 	}
 
 	while (!feof(eri)) {
 		fscanf(eri, "%d %d %d %d", &i, &j, &k, &l);
-		fscanf(eri, "%lf", &((*((*out)->two_electron))(i - 1, j - 1, k - 1, l - 1)));
+		fscanf(eri, "%lf", &((*((*out)->getTwoElectron()))(i - 1, j - 1, k - 1, l - 1)));
 	}
 
 	while(!feof(mux)) {
 		fscanf(mux, "%d %d", &i, &j);
-		fscanf(mux, "%lf", &((*((*out)->mux))(i - 1, j - 1)));
-		(*((*out)->mux))(j - 1, i - 1) = (*((*out)->mux))(i - 1, j - 1);
+		fscanf(mux, "%lf", &((*((*out)->getMux()))(i - 1, j - 1)));
+		(*((*out)->getMux()))(j - 1, i - 1) = (*((*out)->getMux()))(i - 1, j - 1);
 	}
 	while(!feof(muy)) {
 		fscanf(muy, "%d %d", &i, &j);
-		fscanf(muy, "%lf", &((*((*out)->muy))(i - 1, j - 1)));
-		(*((*out)->muy))(j - 1, i - 1) = (*((*out)->muy))(i - 1, j - 1);
+		fscanf(muy, "%lf", &((*((*out)->getMuy()))(i - 1, j - 1)));
+		(*((*out)->getMuy()))(j - 1, i - 1) = (*((*out)->getMuy()))(i - 1, j - 1);
 	}
 	while(!feof(muz)) {
 		fscanf(muz, "%d %d", &i, &j);
-		fscanf(muz, "%lf", &((*out)->muz[i - 1][j - 1]));
-		(*((*out)->muz))(j - 1, i - 1) = (*((*out)->muz))(i - 1, j - 1);
+		fscanf(muz, "%lf", &((*((*out)->getMuz()))(i - 1, j - 1)));
+		(*((*out)->getMuz()))(j - 1, i - 1) = (*((*out)->getMuz()))(i - 1, j - 1);
+	}
+
+	int check;
+	fscanf(hessian, "%d", &check);
+	if (check != (*out)->getNumatoms()) {
+		perror("Error: Invalid sizes.\n");
+		exit(-1);
+	}
+
+	for (int i = 0; i < (*out)->getHessianSize(); i++) {
+		for (int j = 0; j < (*out)->getNumatoms(); j++) {
+			fscanf(hessian, "%lf %lf %lf", &((*((*out)->getHessian()))(i, 3 * j)),
+					&((*((*out)->getHessian()))(i, 3 * j + 1)),
+					&((*((*out)->getHessian()))(i, 3 * j + 2)));
+		}
 	}
 }

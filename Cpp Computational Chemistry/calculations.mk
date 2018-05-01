@@ -1,2 +1,2 @@
-CALC_OBJECTS=./calculations/calculations1$(OBJ_SUFF)
-CALC_SOURCES=./calculations/calculations1.cpp
+CALC_OBJECTS=./calculations/calculations1$(OBJ_SUFF) ./calculations/calculations2$(OBJ_SUFF) ./calculations/calculations3$(OBJ_SUFF) ./calculations/calculations4$(OBJ_SUFF)
+CALC_SOURCES=./calculations/calculations1.cpp ./calculations/calculations2.cpp ./calculations/calculations3.cpp ./calculations/calculations4.cpp

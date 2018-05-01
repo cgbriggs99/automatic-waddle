@@ -5,10 +5,10 @@
  *      Author: Connor
  */
 
-#include "../output.hpp"
-#include "../arrays.hpp"
-#include "../input.hpp"
-#include "../molecule.hpp"
+#ifndef CALCULATIONS1_CPP
+#define CALCULATIONS1_CPP
+
+#include "../compchem.hpp"
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -30,26 +30,34 @@ static int compare(const void *a, const void *b) {
 //Simple 3d distance calculation without overflow or underflow.
 static double hypot3(double x, double y, double z) {
 	double max, a, b;
-	double x1 = x, y1 = y;
 
-	//Simple mergesort.
-	if (fabs(x1) < fabs(y1)) {
-		a = x1;
-		x1 = y1;
-		y1 = a;
-	}
-	if (fabs(z) < fabs(x1)) {
-		a = z;
-		b = x1;
-		max = y1;
-	} else if (fabs(z) < fabs(y1)) {
-		a = x1;
-		b = z;
-		max = y1;
+	if(fabs(x) >= fabs(y) && fabs(x) >= fabs(z)) {
+		max = x;
+		if(fabs(y) > fabs(z)) {
+			a = y;
+			b = z;
+		} else {
+			a = z;
+			b = y;
+		}
+	} else if(fabs(y) > fabs(x) && fabs(y) >= fabs(z)) {
+		max = y;
+		if(fabs(x) > fabs(z)) {
+			a = x;
+			b = z;
+		} else {
+			a = z;
+			b = x;
+		}
 	} else {
-		a = x1;
-		b = y1;
 		max = z;
+		if(fabs(x) > fabs(y)) {
+			a = x;
+			b = y;
+		} else {
+			a = y;
+			b = x;
+		}
 	}
 
 	if (max == 0) {
@@ -66,7 +74,7 @@ static double hypot3(Vector<double> v) {
 	return (hypot3(v[0], v[1], v[2]));
 }
 
-void Molecule::computeDists() {
+void compchem::Molecule::computeDists() {
 	for (int i = 0; i < this->numatoms; i++) {
 		(*(this->distances))(i, i) = 0;
 		for (int j = 0; j < i; j++) {
@@ -79,7 +87,7 @@ void Molecule::computeDists() {
 	}
 }
 
-void Molecule::computeAngles() {
+void compchem::Molecule::computeAngles() {
 	for (int i = 0; i < this->numatoms; i++) {
 		for (int j = 0; j < this->numatoms; j++) {
 			for (int k = 0; k < this->numatoms; k++) {
@@ -98,7 +106,7 @@ void Molecule::computeAngles() {
 	}
 }
 
-void Molecule::computePlaneAngles() {
+void compchem::Molecule::computePlaneAngles() {
 	for (int i = 0; i < this->numatoms; i++) {
 		for (int j = 0; j < this->numatoms; j++) {
 			for (int k = 0; k < this->numatoms; k++) {
@@ -114,7 +122,7 @@ void Molecule::computePlaneAngles() {
 	}
 }
 
-void Molecule::computeTorsionAngles() {
+void compchem::Molecule::computeTorsionAngles() {
 	for (int i = 0; i < this->numatoms; i++) {
 		for (int j = 0; j < this->numatoms; j++) {
 			for (int k = 0; k < this->numatoms; k++) {
@@ -132,23 +140,27 @@ void Molecule::computeTorsionAngles() {
 	}
 }
 
-void Molecule::translateCOM() {
-	Vector<double> center_of_mass(3);
+void compchem::Molecule::translateCOM() {
 	double mass = 0;
 
 	for (int i = 0; i < this->numatoms; i++) {
-		center_of_mass += this->atoms[i].mass * this->atoms[i].pos;
-		mass += this->atoms[i].mass;
+		try {
+			this->center_of_mass += this->atoms[i].mass * this->atoms[i].pos;
+			mass += this->atoms[i].mass;
+		} catch (array::SizeMismatchException &e) {
+			puts(e.what());
+			exit(-1);
+		}
 	}
 
-	center_of_mass /= mass;
+	this->center_of_mass /= mass;
 
 	for (int i = 0; i < this->numatoms; i++) {
-		this->atoms[i].pos -= center_of_mass;
+		this->atoms[i].pos -= this->center_of_mass;
 	}
 }
 
-void Molecule::momentsOfInertia() {
+void compchem::Molecule::momentsOfInertia() {
 	for (int i = 0; i < 3; i++) {
 		for (int j = 0; j < 3; j++) {
 			if (i == j) {
@@ -174,10 +186,23 @@ void Molecule::momentsOfInertia() {
 
 	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'N', 3,
 			this->inertial_moments.getArray(), 3,
-			this->principle_moments.getArray(), im, NULL, 1, NULL, 1);
+			this->principle_moments.getArray(), im, NULL, 3, NULL, 3);
 	qsort(this->principle_moments.getArray(), 3, sizeof(double), compare);
 }
 
-void Molecule::rotations() {
-	//TODO transform the constants between systems.
+//Defines constants that will be necessary for calculations.
+#define PLANCK 3.9905e31 //amu angstrom^2 / s
+#define C 2997924580000000000	//angstrom / s
+
+void compchem::Molecule::rotations() {
+	this->rotational_constants(0) = PLANCK
+			/ (8 * M_PI * M_PI * C * this->principle_moments(0) * .2800285)
+		    / 10000000000;
+	this->rotational_constants(1) = PLANCK
+		    / (8 * M_PI * M_PI * C * this->principle_moments(1) * .2800285)
+		    / 10000000000;
+	this->rotational_constants(2) = PLANCK
+		    / (8 * M_PI * M_PI * C * this->principle_moments(2) * .2800285)
+		    / 10000000000;
 }
+#endif

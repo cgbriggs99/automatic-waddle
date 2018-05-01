@@ -9,23 +9,24 @@
 #define ARRAYS_HPP_
 
 #include <stdlib.h>
+#include <exception>
 
 namespace array {
+using namespace std;
 
-#include <exception>
-class ArrayIndexOutOfBoundsException : std::exception {
+struct ArrayIndexOutOfBoundsException : std::exception {
 	const char *what() const throw() {
 		return ("Array index out of bounds.");
 	}
 };
 
-class CrossProductException : std::exception {
+struct CrossProductException : std::exception {
 	const char *what() const throw() {
 		return ("Invalid size to cross product.");
 	}
 };
 
-class SizeMismatchException : std::exception {
+struct SizeMismatchException : std::exception {
 	const char *what() const throw() {
 		return ("Size mismatch between arguments.");
 	}
@@ -38,7 +39,16 @@ protected:
 	size_t total;
 	bool freeOnDelete;
 	size_t *sizes;
+	size_t *mults;
 	T *data;
+	Array() {
+		this->dim = 0;
+		this->total = 0;
+		this->freeOnDelete = false;
+		this->sizes = NULL;
+		this->data = NULL;
+		this->mults = NULL;
+	}
 public:
 	Array(int dim, ...);
 	Array(T *data, int dim, ...);	//Does not copy. Simply sets the data pointer.
@@ -108,6 +118,20 @@ public:
 		return this->data[ind];
 	}
 
+	friend Vector<T> operator*(Vector<T> vec, const T &scal) {
+		for(int i = 0; i < vec.size; i++) {
+			vec.data[i] *= scal;
+		}
+		return (vec);
+	}
+
+	friend Vector<T> operator*(T &scal, Vector<T> &vec) {
+		for(int i = 0; i < vec.size; i++) {
+			vec.data[i] *= scal;
+		}
+		return (vec);
+	}
+
 	friend Vector<T> operator+(Vector<T> a, const Vector<T> &b) {
 		return (a += b);
 	}
@@ -143,7 +167,7 @@ public:
 
 	Vector<T> operator+=(const Vector<T> &b) {
 		if(this->size != b.size) {
-			throw SizeMismatchException();
+			throw array::SizeMismatchException();
 		}
 		for(int i = 0; i < this->size; i++) {
 			this->data[i] += b.data[i];
@@ -153,7 +177,7 @@ public:
 
 	Vector<T> operator-=(const Vector<T> &b) {
 		if(this->size != b.size) {
-			throw SizeMismatchException();
+			throw array::SizeMismatchException();
 		}
 		for(int i = 0; i < this->size; i++) {
 			this->data[i] -= b.data[i];
@@ -175,12 +199,7 @@ public:
 		return (*this);
 	}
 
-	friend Vector<T> operator*(Vector<T> vec, const T &scal) {
-		for(int i = 0; i < vec.size; i++) {
-			vec.data[i] *= scal;
-		}
-		return (vec);
-	}
+
 
 	friend Vector<T> operator/(Vector<T> vec, const T &scal) {
 		for(int i = 0; i < vec.size; i++) {
@@ -206,5 +225,6 @@ public:
 
 }
 
+#include "./Base/Arrays/arrays.cpp"
 
 #endif /* ARRAYS_HPP_ */
