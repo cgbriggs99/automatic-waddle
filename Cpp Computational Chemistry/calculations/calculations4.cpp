@@ -17,22 +17,25 @@ using namespace compchem;
 using namespace array;
 
 void Molecule::computeMOTEI() {
-	for (int i = 0, ijkl = 0; i < this->orbitals; i++) {
-		for (int j = 0; j <= i; j++) {
-			for (int k = 0; k <= i; k++) {
-				for (int l = 0; l <= ((i == k)? j: k); l++, ijkl++) {
-					(*(this->mo_two_electron))(i, j, k, l) = 0;
-					for (int m = 0; m < this->orbitals; m++) {
-						for (int n = 0; n < this->orbitals; n++) {
-							for (int o = 0; o < this->orbitals; o++) {
-								for (int p = 0; p < this->orbitals; p++) {
-									this->mo_two_electron->getArray()[ijkl] +=
-											(*(this->density))(m, i)
-													* (*(this->density))(n, j)
-													* (*(this->density))(o, k)
-													* (*(this->density))(p, l)
-													* (*(this->two_electron))(m,
-															n, o, p);
+	for (int p = 0; p < this->orbitals; p++) {
+		for (int q = 0; q <= p; q++) {
+			for (int r = 0; r <= p; r++) {
+				for (int s = 0; s <= ((p == r) ? q : r); s++) {
+					(*(this->mo_two_electron))(p, q, r, s) = 0;
+					for (int mu = 0; mu < this->orbitals; mu++) {
+						for (int nu = 0; nu < this->orbitals; nu++) {
+							for (int lam = 0; lam < this->orbitals; lam++) {
+								for (int sig = 0; sig < this->orbitals; sig++) {
+									(*(this->mo_two_electron))(p, q, r, s) +=
+											(*(this->molecular_orbitals))(mu, p)
+													* (*(this->molecular_orbitals))(
+															nu, q)
+													* (*(this->molecular_orbitals))(
+															lam, r)
+													* (*(this->molecular_orbitals))(
+															sig, s)
+													* (*(this->two_electron))(
+															mu, nu, lam, sig);
 								}
 							}
 						}
@@ -40,29 +43,11 @@ void Molecule::computeMOTEI() {
 				}
 			}
 		}
+
 	}
 }
 
 void Molecule::computeMP2() {
-	printArray("Energies", this->molecular_energies);
-	printArray("Orbitals", this->molecular_orbitals);
-
-	int fd = open("mo_two_electron.dat", O_CREAT | O_RDWR, 0777);
-	close(fd);
-	FILE *fp = fopen("mo_two_electron.dat", "r+");
-
-	for(int i = 0; i < this->orbitals; i++) {
-		for(int j = 0; j <= i; j++) {
-			for(int k = 0; k <= i; k++) {
-				for(int l = 0; l <= ((i == k)? j: k); l++) {
-					fprintf(fp, "%d\t%d\t%d\t%d\t%.7f\n", i, j, k, l, (double) (*(this->mo_two_electron))(i, j, k, l));
-				}
-			}
-		}
-	}
-
-	fclose(fp);
-
 	this->mp2_correction = 0;
 	for (int i = 0; i < this->occupied; i++) {
 		for (int j = 0; j < this->occupied; j++) {
