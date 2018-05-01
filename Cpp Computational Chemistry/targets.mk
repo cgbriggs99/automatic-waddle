@@ -5,7 +5,7 @@ include paths.mk
 include defs.mk
 
 ifeq ($(OS),Windows_NT)
-CFLAGS=-g
+CFLAGS=-Wall -Wextra -g
 else
 CFLAGS=-g3 -ggdb -Og
 endif

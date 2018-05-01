@@ -36,7 +36,7 @@ base$(ARCH_SUFF): $(BASE_OBJECTS)
 	$(AR) -cr $@ $^
 	
 $(EXECS): $(SOURCES) $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $(subst $(EXEC_SUFF),.cpp,$@) $(OBJECTS) $(DLLS) $(DEFINES) $(INCLUDES) $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $@ $(subst $(EXEC_SUFF),.cpp,$@) $(OBJECTS) $(LDFLAGS) $(DLLS) $(DEFINES) $(INCLUDES)
 
 $(BASE_OBJECTS) $(CHEM_OBJECTS) $(CALC_OBJECTS) ./Main/main$(OBJ_SUFF): $(BASE_SOURCES) $(CHEM_SOURCES) $(CALC_SOURCES) ./Main/main.cpp
 	$(CC) $(CFLAGS) -c -o $@ $(subst $(OBJ_SUFF),.cpp,$@) $(DEFINES) $(INCLUDES)
