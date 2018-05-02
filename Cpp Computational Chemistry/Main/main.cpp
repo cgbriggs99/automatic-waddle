@@ -16,7 +16,8 @@
 using namespace compchem;
 
 void compchem::initialize(class Molecule **mol, int argc, char **argv) {
-	if(argc == 1) {
+	printf("number of args: %d\n", argc);
+	if(argc == 2) {
 		if(!strcmp(argv[1], "-h")) {
 			puts("Enter the files in the order:");
 			puts("geometry nuclear-repulsion-energy overlap");

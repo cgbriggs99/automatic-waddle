@@ -35,7 +35,7 @@ chem$(ARCH_SUFF): $(CHEM_OBJECTS)
 base$(ARCH_SUFF): $(BASE_OBJECTS)
 	$(AR) -cr $@ $^
 	
-$(EXECS): $(SOURCES) $(OBJECTS)
+$(EXECS): $(SOURCES) $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $(subst $(EXEC_SUFF),.cpp,$@) $(OBJECTS) $(LDFLAGS) $(DLLS) $(DEFINES) $(INCLUDES)
 
 $(BASE_OBJECTS) $(CHEM_OBJECTS) $(CALC_OBJECTS) ./Main/main$(OBJ_SUFF): $(BASE_SOURCES) $(CHEM_SOURCES) $(CALC_SOURCES) ./Main/main.cpp

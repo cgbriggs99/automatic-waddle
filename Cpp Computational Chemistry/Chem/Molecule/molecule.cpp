@@ -268,15 +268,23 @@ compchem::Molecule::Molecule(Atom *atoms, int num, double scf_eps) : center_of_m
 }
 
 Molecule::~Molecule() {
+	puts("debug6");
+	fflush(stdout);
 	//Geometry data.
 	delete distances;
 	delete angles;
 	delete plane_angles;
 	delete torsion_angles;
 
+	puts("debug9");
+	fflush(stdout);
+
 	//Harmonic data.
 	delete hessian;
 	delete hessian_eigs;
+
+	puts("debug11");
+	fflush(stdout);
 
 	//Energies.
 	delete molecular_energies;
@@ -286,9 +294,16 @@ Molecule::~Molecule() {
 	delete kinetic;
 	delete attraction;
 	delete hamiltonian;
+
+	puts("debug14");
+	fflush(stdout);
+
 	delete two_electron;
 	delete mo_two_electron;
 	delete spin_two_electron;
+
+	puts("debug12");
+	fflush(stdout);
 
 	//Important matrices.
 	delete orthogonal;
@@ -302,6 +317,9 @@ Molecule::~Molecule() {
 	delete muz;
 	delete spin_fock;
 
+	puts("debug13");
+	fflush(stdout);
+
 	//CCSD intermediates;
 	delete t1_amplitudes;
 	delete t2_amplitudes;
@@ -310,9 +328,14 @@ Molecule::~Molecule() {
 	delete tpe1;
 	delete tpe2;
 
+	puts("debug10");
+	fflush(stdout);
+
 	for(int i = 0; i < this->numatoms; i++) {
 		delete (atoms + i);
 	}
+	puts("debug7");
+	fflush(stdout);
 	free(atoms);
 
 	if(blocks == -2) {
@@ -326,6 +349,8 @@ Molecule::~Molecule() {
 		//Close stuff.
 #endif
 	}
+	puts("debug8");
+	fflush(stdout);
 }
 
 

@@ -20,9 +20,9 @@ using namespace array;
 
 static int compare(const void *a, const void *b) {
 	if(*((double *) a) - *((double *) b) > 0) {
-		return 1;
+		return (1);
 	} else if(*((double *) a) - *((double *) b) < 0) {
-		return -1;
+		return (-1);
 	}
 	return (0);
 }

@@ -5,3 +5,4 @@
 a.out
 paths.mk
 firstbuild.mk
+/makelog.log

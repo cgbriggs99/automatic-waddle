@@ -447,16 +447,21 @@ TEArray<T>::TEArray(const Array<T> &arr) {
 	for (int i = 0; i < this->dim; i++) {
 		this->sizes[i] = arr.sizes[i];
 	}
-	this->freeOnDelete = false;
+	this->freeOnDelete = true;
 }
 
 template<class T>
 TEArray<T>::~TEArray() {
+	puts("debug15");
+	fflush(stdout);
 	free(this->sizes);
+	puts("debug17");
+		fflush(stdout);
 	if (this->freeOnDelete) {
 		delete [] this->data;
 	}
-	free(this->sizes);
+	puts("debug16");
+	fflush(stdout);
 }
 
 template<class T>
