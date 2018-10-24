@@ -1,0 +1,18 @@
+Input Layer
+	Mouse
+	Keyboard
+
+Application Layer
+	Computations
+	Rendering
+
+Output Layer
+	Display
+	GUI
+	
+Observers and subjects
+	
+Facades
+
+Commands
+
