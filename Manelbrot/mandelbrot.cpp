@@ -12,7 +12,7 @@
 using namespace std;
 
 static color_t pallette(long int count) {
-	return (hsvToRGB(2.0F * expl(-count * count / (2.0F * 200)) / 3, 1, 1.0F - expl(-count), 1));
+	return (hsvToRGB((expl(-count * count / (2.0F * 300)) + 1) / 3, 1, (erfl((count - 3) / 100.0F) + 1) / 2, 1));
 }
 
 static color_t interpolate(long int count1, long int count2, long double value) {

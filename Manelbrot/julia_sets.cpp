@@ -27,6 +27,9 @@
 #include <stdlib.h>
 //#include <C:/freeglut/include/GL/freeglut.h>
 
+#define WIDTH 1000
+#define HEIGHT 700
+
 Renderer *Renderer::singleton = nullptr;
 Window *Window::singleton = nullptr;
 UpdateCommandReceiver *UpdateCommandReceiver::singleton = nullptr;
@@ -41,9 +44,9 @@ void display(void) {
 }
 
 void reshape(int wid, int hei) {
-	if (wid != 800 || hei != 500 || glutGet(GLUT_WINDOW_WIDTH) != 800
-			|| glutGet(GLUT_WINDOW_HEIGHT) != 500) {
-		Window::getSingleton()->resize(800, 500);
+	if (wid != WIDTH || hei != HEIGHT || glutGet(GLUT_WINDOW_WIDTH) != WIDTH
+			|| glutGet(GLUT_WINDOW_HEIGHT) != HEIGHT) {
+		Window::getSingleton()->resize(WIDTH, HEIGHT);
 	}
 	Renderer::getSingleton()->setUpdate(true);
 	std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -119,7 +122,7 @@ int main(int argc, char **argv) {
 		sprintf(str, "Julia Set: %Lf + %Lf i", pos.real(), pos.imag());
 	}
 	glutInit(&argc, argv);
-	glutInitWindowSize(800, 500);
+	glutInitWindowSize(WIDTH, HEIGHT);
 	glutCreateWindow(str);
 	glutShowWindow();
 
@@ -135,31 +138,31 @@ int main(int argc, char **argv) {
 
 
 	TextField *click_pos = new TextField(GLUT_BITMAP_HELVETICA_18,
-			(char *) "Last click: ", 525, 100, makeColor4i(0, 0, 0, 255));
-	JuliaCanvas *canvas = new JuliaCanvas(pos, 0, 0, 500, 500, true,
+			(char *) "Last click: ", HEIGHT + 25, 100, makeColor4i(0, 0, 0, 255));
+	JuliaCanvas *canvas = new JuliaCanvas(pos, 0, 0, HEIGHT, HEIGHT, true,
 			click_pos);
 
 	Renderer::getSingleton()->registerVisible(new Background(1, 1, 1, 1), 0);
 	Renderer::getSingleton()->registerVisible(canvas, 1);
 	Renderer::getSingleton()->registerVisible(
 			new TextField(GLUT_BITMAP_HELVETICA_18, (char *) "Current Zoom:\n",
-					525, 400, makeColor4i(0, 0, 0, 255)), 1);
+					HEIGHT + 25, 400, makeColor4i(0, 0, 0, 255)), 1);
 	if(argc != 3) {
 		Renderer::getSingleton()->registerVisible(
 				new TextField(GLUT_BITMAP_HELVETICA_18, (str[21] = '\n', str),
-						525, 480, makeColor4i(0, 0, 0, 255)), 1);
+						HEIGHT + 25, 480, makeColor4i(0, 0, 0, 255)), 1);
 	} else {
 		Renderer::getSingleton()->registerVisible(
 				new TextField(GLUT_BITMAP_HELVETICA_18, (str[11] = '\n', str),
-						525, 480, makeColor4i(0, 0, 0, 255)), 1);
+						HEIGHT + 25, 480, makeColor4i(0, 0, 0, 255)), 1);
 	}
 	Renderer::getSingleton()->registerVisible(
 			new TextField(GLUT_BITMAP_HELVETICA_18,
-					(char *) "Current Position:\n", 525, 200,
+					(char *) "Current Position:\n", HEIGHT + 25, 200,
 					makeColor4i(0, 0, 0, 255)), 1);
 	Renderer::getSingleton()->registerVisible(click_pos, 1);
 
-	TextInputField *t1 = new TextInputField(GLUT_BITMAP_HELVETICA_18, 525,
+	TextInputField *t1 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
 			390 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 100, 1,
 			(unsigned char *) "0.5", text1, canvas);
 	Renderer::getSingleton()->registerVisible(t1, 1);
@@ -168,7 +171,7 @@ int main(int argc, char **argv) {
 	FocusMediator::getSingleton()->registerFocusable(t1);
 	IdleMediator::getSingleton()->registerIdle(Renderer::getSingleton());
 
-	TextInputField *t2 = new TextInputField(GLUT_BITMAP_HELVETICA_18, 525,
+	TextInputField *t2 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
 			190 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 100, 1,
 			(unsigned char *) "0", text2, canvas);
 	Renderer::getSingleton()->registerVisible(t2, 1);
@@ -176,7 +179,7 @@ int main(int argc, char **argv) {
 	KeyboardReceiver::getSingleton()->registerObserver(t2);
 	FocusMediator::getSingleton()->registerFocusable(t2);
 
-	TextInputField *t3 = new TextInputField(GLUT_BITMAP_HELVETICA_18, 525,
+	TextInputField *t3 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
 			180 - 2 * glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 100, 1,
 			(unsigned char *) "0", text3, canvas);
 	Renderer::getSingleton()->registerVisible(t3, 1);
@@ -186,10 +189,10 @@ int main(int argc, char **argv) {
 
 	Renderer::getSingleton()->registerVisible(
 			new TextField(GLUT_BITMAP_HELVETICA_18,
-					(char *) "Number of Cycles:\n", 525, 300,
+					(char *) "Number of Cycles:\n", HEIGHT + 25, 300,
 					makeColor4i(0, 0, 0, 255)), 1);
 
-	TextInputField *t4 = new TextInputField(GLUT_BITMAP_HELVETICA_18, 525,
+	TextInputField *t4 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
 			290 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 100, 1,
 			(unsigned char *) "100", text4, canvas);
 	Renderer::getSingleton()->registerVisible(t4, 1);
