@@ -9,7 +9,11 @@
 #define DEFS_HPP_
 
 typedef struct {
+#ifndef __MINGW64__
 	unsigned char a, b, g, r;
+#else
+	unsigned char r, g, b, a;
+#endif
 } color_t;
 
 extern color_t makeColor4i(unsigned char r, unsigned char g, unsigned char b, unsigned char a);

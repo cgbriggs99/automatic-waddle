@@ -15,6 +15,7 @@
 #include <GL/gl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <GL/freeglut.h>
 
 class Canvas : public Visible, public UpdateCommandObserver {
 private:
@@ -55,8 +56,9 @@ public:
 		glLoadIdentity();
 		float check = 1 - (2.0f * (y + height)) / w->getHeight();
 		glRasterPos2f((2.0f * (x)) / w->getWidth() - 1, (2.0f * y) / w->getHeight() - 1);
-		glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, pixels);
+		glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 		glPopMatrix();
+		glutSwapBuffers();
 	}
 
 	void setPixel(int x, int y, color_t color) {
