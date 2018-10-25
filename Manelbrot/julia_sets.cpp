@@ -107,7 +107,7 @@ int main(int argc, char **argv) {
 
 		srand((int) (365.25 * date->tm_year) + date->tm_yday);
 
-		long r = random(), theta = random();
+		long r = rand(), theta = rand();
 		pos = std::complex<long double>(2 * (long double) r / RAND_MAX * cosl(theta),
 				2 * (long double) r / RAND_MAX * sinl(theta));
 		sprintf(str, "Julia Set of the Day: %Lf + %Lf i", pos.real(), pos.imag());
