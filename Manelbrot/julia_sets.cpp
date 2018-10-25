@@ -138,6 +138,9 @@ int main(int argc, char **argv) {
 			new TextField(GLUT_BITMAP_HELVETICA_18, (char *) "Current Zoom:\n",
 					525, 400, makeColor4i(0, 0, 0, 255)), 1);
 	Renderer::getSingleton()->registerVisible(
+			new TextField(GLUT_BITMAP_HELVETICA_18, (str[21] = '\n', str),
+					525, 480, makeColor4i(0, 0, 0, 255)), 1);
+	Renderer::getSingleton()->registerVisible(
 			new TextField(GLUT_BITMAP_HELVETICA_18,
 					(char *) "Current Position:\n", 525, 200,
 					makeColor4i(0, 0, 0, 255)), 1);

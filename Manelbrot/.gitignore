@@ -1,0 +1,9 @@
+*.o
+*.obj
+*.exe
+mandelbrot
+julia
+.cproject
+.project
+.settings/*
+.gitignore~
