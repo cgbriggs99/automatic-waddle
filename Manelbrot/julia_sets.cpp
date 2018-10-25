@@ -163,7 +163,7 @@ int main(int argc, char **argv) {
 	Renderer::getSingleton()->registerVisible(click_pos, 1);
 
 	TextInputField *t1 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
-			390 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 100, 1,
+			390 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 250, 1,
 			(unsigned char *) "0.5", text1, canvas);
 	Renderer::getSingleton()->registerVisible(t1, 1);
 	MouseReceiver::getSingleton()->registerObserver(t1);
@@ -172,7 +172,7 @@ int main(int argc, char **argv) {
 	IdleMediator::getSingleton()->registerIdle(Renderer::getSingleton());
 
 	TextInputField *t2 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
-			190 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 100, 1,
+			190 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 250, 1,
 			(unsigned char *) "0", text2, canvas);
 	Renderer::getSingleton()->registerVisible(t2, 1);
 	MouseReceiver::getSingleton()->registerObserver(t2);
@@ -180,7 +180,7 @@ int main(int argc, char **argv) {
 	FocusMediator::getSingleton()->registerFocusable(t2);
 
 	TextInputField *t3 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
-			180 - 2 * glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 100, 1,
+			180 - 2 * glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 250, 1,
 			(unsigned char *) "0", text3, canvas);
 	Renderer::getSingleton()->registerVisible(t3, 1);
 	MouseReceiver::getSingleton()->registerObserver(t3);
@@ -193,7 +193,7 @@ int main(int argc, char **argv) {
 					makeColor4i(0, 0, 0, 255)), 1);
 
 	TextInputField *t4 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
-			290 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 100, 1,
+			290 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 250, 1,
 			(unsigned char *) "100", text4, canvas);
 	Renderer::getSingleton()->registerVisible(t4, 1);
 	MouseReceiver::getSingleton()->registerObserver(t4);
@@ -202,6 +202,9 @@ int main(int argc, char **argv) {
 
 	MouseReceiver::getSingleton()->registerObserver(canvas);
 
+
+
+	canvas->setPoll(1000);
 
 	glutMainLoop();
 
