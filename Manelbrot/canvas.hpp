@@ -56,7 +56,11 @@ public:
 		glLoadIdentity();
 		float check = 1 - (2.0f * (y + height)) / w->getHeight();
 		glRasterPos2f((2.0f * (x)) / w->getWidth() - 1, (2.0f * y) / w->getHeight() - 1);
+#ifdef __MINGW64__
 		glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+#else
+		glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, pixels);
+#endif
 		glPopMatrix();
 		glutSwapBuffers();
 	}
@@ -189,7 +193,11 @@ public:
 		memcpy(old, pixels, width * height * sizeof(color_t));
 		for(int i = 0; i < width; i++) {
 			for(int j = 0; j < height; j++) {
-				color_t sum = {0, 0, 0, 0};
+				color_t sum;
+				sum.a = 0;
+				sum.b = 0;
+				sum.g = 0;
+				sum.r = 0;
 				if(i != 0) {
 					sum = alphaComposite(sum, old[i - 1 + j * width]);
 					if(j != 0) {
