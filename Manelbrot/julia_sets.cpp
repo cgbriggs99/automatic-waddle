@@ -99,18 +99,25 @@ void text4(const unsigned char *str, void *mandel) {
 }
 
 int main(int argc, char **argv) {
-	time_t t = time(NULL);
-	struct tm *date = localtime(&t);
-
-	srand((int) (365.25 * date->tm_year) + date->tm_yday);
-
-	long r = random(), theta = random();
-	std::complex<long double> pos = std::complex<long double>(2 * (long double) r / RAND_MAX * cosl(theta),
-			2 * (long double) r / RAND_MAX * sinl(theta));
-
+	std::complex<long double> pos;
 	char *str = (char *) calloc(100, sizeof(char));
-	sprintf(str, "Julia Set of the Day: %Lf + %Lf i", pos.real(), pos.imag());
+	if(argc != 3) {
+		time_t t = time(NULL);
+		struct tm *date = localtime(&t);
 
+		srand((int) (365.25 * date->tm_year) + date->tm_yday);
+
+		long r = random(), theta = random();
+		pos = std::complex<long double>(2 * (long double) r / RAND_MAX * cosl(theta),
+				2 * (long double) r / RAND_MAX * sinl(theta));
+		sprintf(str, "Julia Set of the Day: %Lf + %Lf i", pos.real(), pos.imag());
+	} else {
+		long double x, y;
+		sscanf(argv[1], "%Lf", &x);
+		sscanf(argv[2], "%Lf", &y);
+		pos = std::complex<long double>(x, y);
+		sprintf(str, "Julia Set %Lf + %Lf i", pos.real(), pos.imag());
+	}
 	glutInit(&argc, argv);
 	glutInitWindowSize(800, 500);
 	glutCreateWindow(str);
