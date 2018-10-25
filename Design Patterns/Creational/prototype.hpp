@@ -12,7 +12,6 @@ namespace design_patterns {
 
 class Prototype {
 public:
-	virtual Prototype();
 	virtual ~Prototype();
 
 	virtual Prototype clone();

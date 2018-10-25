@@ -12,6 +12,5 @@
 #define DESIGN_PATTERNS_HPP_
 
 #include "Creational/prototype.hpp"
-#include "Creational/singleton.hpp"
 
 #endif /* DESIGN_PATTERNS_HPP_ */

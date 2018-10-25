@@ -8,8 +8,9 @@
 #ifndef MANDELBROT_HPP_
 #define MANDELBROT_HPP_
 
+#include "defs.hpp"
 #include <complex>
 
-extern int mandelbrot(std::complex<long double> c);
+extern color_t mandelbrot(std::complex<long double> c, int max_count);
 
 #endif /* MANDELBROT_HPP_ */
