@@ -35,12 +35,12 @@ public:
 			for(int i = 0; i < this->getWidth(); i++) {
 				for(int j = 0; j < this->getHeight(); j++) {
 					std::complex<long double> c;
-					c.real(((2.0 * i) / this->getWidth() - 1) / zoom);
-					c.imag(((2.0 * j) / this->getHeight() - 1) / zoom);
+					c.real(((2.0F * i) / this->getWidth() - 1) / zoom);
+					c.imag(((2.0F * j) / this->getHeight() - 1) / zoom);
 					setPixel(i, j, mandelbrot(std::complex<long double>(0), c + offset, this->poll));
 				}
 			}
-			antialias();
+			//antialias();
 		}
 	}
 //
