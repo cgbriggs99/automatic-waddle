@@ -11,6 +11,6 @@
 #include "defs.hpp"
 #include <complex>
 
-extern color_t mandelbrot(std::complex<long double> c, int max_count);
+extern color_t mandelbrot(std::complex<long double> z, std::complex<long double> c, int max_count);
 
 #endif /* MANDELBROT_HPP_ */

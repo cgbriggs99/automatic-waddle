@@ -13,11 +13,12 @@
 #include "window.hpp"
 #include <string.h>
 #include <stdlib.h>
+#include "update_command.hpp"
 
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 
-class TextField : public Visible {
+class TextField : public Visible, public UpdateCommandObserver {
 private:
 	unsigned char *value;
 	int x, y, width, height;
@@ -56,6 +57,7 @@ public :
 		this->value = (unsigned char *) realloc(this->value, (strlen(val) + 1) * sizeof(unsigned char));
 		memcpy(this->value, val, strlen(val));
 		this->value[strlen(val)] = 0;
+		this->setUpdate(true);
 	}
 };
 

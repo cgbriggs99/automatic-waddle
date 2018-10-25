@@ -127,20 +127,15 @@ public:
 				(Window::getSingleton()->getHeight() - y) < this->y + this->height) {
 			FocusMediator::getSingleton()->giveFocus(this);
 			if(hasFocus) {
-				printf("I have focus.\n");
 				cursorpos = strlen((char *) this->str);
 			}
 		} else {
 			FocusMediator::getSingleton()->removeFocus(this);
-			if(!hasFocus) {
-				printf("I no longer have focus.\n");
-			}
 		}
 	}
 
 	void onKeyPress(unsigned char key, int x, int y) override {
 		if(hasFocus) {
-			printf("Recieved: %c (%d)\n", key, key);
 			if(key == '\n' || key == '\r') {
 				this->onEntered(this->str, this->data);
 			} else if(key == '\b') {

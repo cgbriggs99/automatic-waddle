@@ -11,10 +11,10 @@
 
 using namespace std;
 
-color_t mandelbrot(complex<long double> c, int max_count) {
+color_t mandelbrot(complex<long double> z, complex<long double> c, int max_count) {
 	complex<long double> z0, z1;
-	z0 = 0;
-	z1 = c;
+	z0 = z;
+	z1 = z * z + c;
 	int count = 0;
 	while(abs(z1) <= 2 && count < max_count) {
 		z0 = z1;
@@ -28,6 +28,6 @@ color_t mandelbrot(complex<long double> c, int max_count) {
 	if(count == 0) {
 		return (makeColor4i(255, 255, 255, 255));
 	}
-	return (hsvToRGB(1.0 / count, 1, 1, 1));
+	return (hsvToRGB((float) (max_count - count) / max_count, 1, ((float) max_count) / (2.0f * (max_count - count)) + 0.5f, 1));
 }
 
