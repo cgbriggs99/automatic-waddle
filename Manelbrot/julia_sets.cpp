@@ -116,7 +116,7 @@ int main(int argc, char **argv) {
 		sscanf(argv[1], "%Lf", &x);
 		sscanf(argv[2], "%Lf", &y);
 		pos = std::complex<long double>(x, y);
-		sprintf(str, "Julia Set %Lf + %Lf i", pos.real(), pos.imag());
+		sprintf(str, "Julia Set: %Lf + %Lf i", pos.real(), pos.imag());
 	}
 	glutInit(&argc, argv);
 	glutInitWindowSize(800, 500);
@@ -144,9 +144,15 @@ int main(int argc, char **argv) {
 	Renderer::getSingleton()->registerVisible(
 			new TextField(GLUT_BITMAP_HELVETICA_18, (char *) "Current Zoom:\n",
 					525, 400, makeColor4i(0, 0, 0, 255)), 1);
-	Renderer::getSingleton()->registerVisible(
-			new TextField(GLUT_BITMAP_HELVETICA_18, (str[21] = '\n', str),
-					525, 480, makeColor4i(0, 0, 0, 255)), 1);
+	if(argc != 3) {
+		Renderer::getSingleton()->registerVisible(
+				new TextField(GLUT_BITMAP_HELVETICA_18, (str[21] = '\n', str),
+						525, 480, makeColor4i(0, 0, 0, 255)), 1);
+	} else {
+		Renderer::getSingleton()->registerVisible(
+				new TextField(GLUT_BITMAP_HELVETICA_18, (str[11] = '\n', str),
+						525, 480, makeColor4i(0, 0, 0, 255)), 1);
+	}
 	Renderer::getSingleton()->registerVisible(
 			new TextField(GLUT_BITMAP_HELVETICA_18,
 					(char *) "Current Position:\n", 525, 200,
