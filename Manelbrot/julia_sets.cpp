@@ -194,7 +194,7 @@ int main(int argc, char **argv) {
 
 	TextInputField *t4 = new TextInputField(GLUT_BITMAP_HELVETICA_18, HEIGHT + 25,
 			290 - glutBitmapHeight(GLUT_BITMAP_HELVETICA_18), 250, 1,
-			(unsigned char *) "100", text4, canvas);
+			(unsigned char *) "1000", text4, canvas);
 	Renderer::getSingleton()->registerVisible(t4, 1);
 	MouseReceiver::getSingleton()->registerObserver(t4);
 	KeyboardReceiver::getSingleton()->registerObserver(t4);
