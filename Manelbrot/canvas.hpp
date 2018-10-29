@@ -62,7 +62,6 @@ public:
 		glDrawPixels(width, height, GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, pixels);
 #endif
 		glPopMatrix();
-		glutSwapBuffers();
 	}
 
 	void setPixel(int x, int y, color_t color) {
@@ -107,6 +106,19 @@ public:
 		for(int i = 0; i < width * height; i++) {
 			pixels[i] = color;
 		}
+	}
+
+	void translate2i(int dx, int dy) {
+		color_t *temp = (color_t *) calloc(this->width * this->height, sizeof(color_t));
+		memcpy(temp, this->pixels, this->width * this->height * sizeof(color_t));
+
+		this->clear();
+		for(int i = (dx < 0)? 0: dx; i < (dx < 0)? this->width + dx: this->width; i++) {
+			for(int j = (dy < 0)? 0: dy; j < (dy < 0)? this->height + dx: this->height; j++) {
+				this->pixels[i + j * this->width] = temp[i - dx + (j - dy) * this->width];
+			}
+		}
+		free(temp);
 	}
 
 	void setColor4f(float r, float g, float b, float a) {

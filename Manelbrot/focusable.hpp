@@ -9,8 +9,9 @@
 #define FOCUSABLE_HPP_
 
 #include <vector>
+#include "command.hpp"
 
-class Focusable {
+class Focusable : Observer{
 protected:
 	bool hasFocus;
 public:
@@ -29,7 +30,7 @@ public:
 	}
 };
 
-class FocusMediator {
+class FocusMediator : Receiver {
 private:
 	std::vector<Focusable *> refs;
 	Focusable *curr_focused;

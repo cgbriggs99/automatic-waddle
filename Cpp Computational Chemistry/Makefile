@@ -19,6 +19,7 @@ clean:
 	$(RM) $(L1_REMOVE)
 	$(RM) *.o
 	$(RM) *.a
+	$(RM) *.obj
 
 #This works.
 .PHONY: purge
@@ -35,11 +36,13 @@ chem$(ARCH_SUFF): $(CHEM_OBJECTS)
 base$(ARCH_SUFF): $(BASE_OBJECTS)
 	$(AR) -cr $@ $^
 	
-$(EXECS): $(SOURCES) $(DEPS)
-	$(CC) $(CFLAGS) -o $@ $(subst $(EXEC_SUFF),.cpp,$@) $(OBJECTS) $(LDFLAGS) $(DLLS) $(DEFINES) $(INCLUDES)
+$(SOURCES): $(DEPS)
+	$(CC) $(CFLAGS) -o $(subst .cpp,$(EXEC_SUFF),$@) $@ $(DEPS) $(LDFLAGS) $(DLLS) $(DEFINES) $(INCLUDES)
 
-$(BASE_OBJECTS) $(CHEM_OBJECTS) $(CALC_OBJECTS) ./Main/main$(OBJ_SUFF): $(BASE_SOURCES) $(CHEM_SOURCES) $(CALC_SOURCES) ./Main/main.cpp
-	$(CC) $(CFLAGS) -c -o $@ $(subst $(OBJ_SUFF),.cpp,$@) $(DEFINES) $(INCLUDES)
+$(BASE_OBJECTS) $(CHEM_OBJECTS) $(CALC_OBJECTS):
+	$(MAKE) $(subst $(OBJ_SUFF),.cpp,$@)
 	
-$(BASE_SOURCES) $(CHEM_SOURCES) $(CALC_SOURCES) $(SOURCES) ./Main/main.cpp:
+$(BASE_SOURCES) $(CHEM_SOURCES) $(CALC_SOURCES) ./Main/main.cpp:
+	$(CC) $(CFLAGS) -c -o $(subst .cpp,$(OBJ_SUFF),$@) $@ $(DEFINES) $(INCLUDES)
+
 	

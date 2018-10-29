@@ -80,30 +80,44 @@ private:
 	int cursorpos;
 	void *font;
 	void *data;
+	unsigned char *label;
 	void (*onEntered)(const unsigned char *str, void *);
+	bool show_label;
 public:
 	TextInputField(void *font, int x, int y, int width, int height, unsigned char *label,
 			void (*onEntered)(const unsigned char*, void *ptr), void *data) {
 		this->x = x;
 		this->y = y;
 		this->height = height * (glutBitmapHeight(font) + 6);
-		this->str = (unsigned char *) calloc(strlen((char *) label) + 1, sizeof(char));
-		memcpy(this->str, label, strlen((char *)label));
+		this->label = (unsigned char *) calloc(strlen((char *) label) + 1, sizeof(char));
+		memcpy(this->label, label, strlen((char *)label));
 		this->width = width;
 		this->cursorpos = 0;
 		this->font = font;
 		this->onEntered = onEntered;
 		this->data = data;
+		this->str = (unsigned char *) calloc(1, sizeof(char));
+		this->show_label = true;
 	}
 
 	virtual ~TextInputField() {
-		free(this->str);
+		if(this->str != NULL) {
+			free(this->str);
+		}
+		if(this->label != NULL) {
+			free(this->label);
+		}
 	}
 
 	void draw() override {
-		Window *w = Window::getSingleton();
+	Window *w = Window::getSingleton();
 		glBegin(GL_LINE_STRIP);
-		glColor4f(0, 0, 0, 1);
+
+		if(strlen((char *) this->str) == 0) {
+			glColor4f(0, 0, 0, 0.7);
+		} else {
+			glColor4f(0, 0, 0, 1);
+		}
 
 		glVertex2f((2.0f * (x)) / w->getWidth() - 1, (2.0f * y) / w->getHeight() - 1);
 		glVertex2f((2.0f * (x + width)) / w->getWidth() - 1, (2.0f * y) / w->getHeight() - 1);
@@ -112,13 +126,46 @@ public:
 		glVertex2f((2.0f * (x)) / w->getWidth() - 1, (2.0f * y) / w->getHeight() - 1);
 		glEnd();
 		glRasterPos2f((2.0f * (x + 3)) / w->getWidth() - 1, (2.0f * (y + 3)) / w->getHeight() - 1);
-		unsigned char *temp = (unsigned char *) calloc(strlen((char *) this->str) + 1, sizeof(char));
-		strncpy((char *) temp, (char *) this->str, strlen((char *) this->str));
+		unsigned char *temp;
+		if(strlen((char *) this->str) == 0 && strlen((char *) this->label) != 0 &&
+				this->show_label) {
+			temp = (unsigned char *) calloc(strlen((char *) this->label) + 1, sizeof(char));
+			strncpy((char *) temp, (char *) this->label, strlen((char *) this->label));
+		} else if(strlen((char *) this->str) != 0){
+			temp = (unsigned char *) calloc(strlen((char *) this->str) + 1, sizeof(char));
+			strncpy((char *) temp, (char *) this->str, strlen((char *) this->str));
+		} else {
+			temp = (unsigned char *) calloc(1, sizeof(char));
+		}
 		while(glutBitmapLength(this->font, temp) > width - 6) {
 			temp[strlen((char *) temp) - 1] = 0;
 		}
-		glutBitmapString(this->font, temp);
+
+		for(int i = 0; i < strlen((char *) temp); i++) {
+			glutBitmapCharacter(this->font, temp[i]);
+			if(this->cursorpos == i && this->hasFocus) {
+				drawCursor();
+			}
+		}
+		if(this->cursorpos == strlen((char *) temp) && this->hasFocus) {
+			drawCursor();
+		}
+
 		free(temp);
+	}
+
+	void drawCursor() {
+		color_t *cursor = (color_t *) calloc(glutBitmapHeight(this->font),
+			sizeof(color_t));
+		for(int i = 0; i < glutBitmapHeight(this->font); i++) {
+			cursor[i] = makeColor4i(0, 0, 0, 255);
+		}
+#ifdef __MINGW64__
+		glDrawPixels(1, glutBitmapHeight(this->font), GL_RGBA, GL_UNSIGNED_BYTE, cursor);
+#else
+		glDrawPixels(1, glutBitmapHeight(this->font), GL_RGBA, GL_UNSIGNED_INT_8_8_8_8, cursor);
+#endif
+		free(cursor);
 	}
 
 	void onClick(int button, int status, int x, int y) override {
@@ -127,7 +174,8 @@ public:
 				(Window::getSingleton()->getHeight() - y) < this->y + this->height) {
 			FocusMediator::getSingleton()->giveFocus(this);
 			if(hasFocus) {
-				cursorpos = strlen((char *) this->str);
+				//cursorpos = strlen((char *) this->str);
+				this->show_label = false;
 			}
 		} else {
 			FocusMediator::getSingleton()->removeFocus(this);
@@ -154,6 +202,7 @@ public:
 			} else {
 				char ch = key;
 				this->str = (unsigned char *) realloc(this->str, (strlen((char *) this->str) + 2) * sizeof(char));
+				this->str[strlen((char *) this->str) + 1] = 0;
 				for(int i = strlen((char *) this->str); i > this->cursorpos; i--) {
 					this->str[i] = this->str[i - 1];
 				}

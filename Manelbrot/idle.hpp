@@ -16,6 +16,7 @@ public:
 
 	virtual void onIdle(void) = 0;
 	virtual int getWaitMilis() = 0;
+	virtual bool getDoIdle() = 0;
 };
 
 class IdleMediator {
@@ -44,7 +45,9 @@ public:
 
 	void loopIdle() {
 		for(int i = 0; i < obs.size(); i++) {
-			glutTimerFunc(obs[i]->getWaitMilis(), IdleMediator::idle_func, i);
+			if(obs[i]->getDoIdle()) {
+				glutTimerFunc(obs[i]->getWaitMilis(), IdleMediator::idle_func, i);
+			}
 		}
 	}
 };

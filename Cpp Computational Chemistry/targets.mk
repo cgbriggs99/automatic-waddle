@@ -13,7 +13,8 @@ endif
 EXECS=./Main/geometry$(EXEC_SUFF) ./Main/hessian$(EXEC_SUFF) ./Main/scf$(EXEC_SUFF) ./Main/mp2$(EXEC_SUFF)
 SOURCES=./Main/geometry.cpp ./Main/hessian.cpp ./Main/scf.cpp ./Main/mp2.cpp
 
-TARGETS=base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF) ./Main/main$(OBJ_SUFF) $(EXECS)
+TARGETS=$(BASE_SOURCES) $(CHEM_SOURCES) $(CALC_SOURCES) ./Main/main.cpp base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF) $(SOURCES)
+#TARGETS=base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF) ./Main/main$(OBJ_SUFF) $(EXECS)
 DEPS=base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF) ./Main/main$(OBJ_SUFF) 
 OBJECTS=$(BASE_OBJECTS) $(CHEM_OBJECTS) $(CALC_OBJECTS) ./Main/main$(OBJ_SUFF)
 
@@ -24,8 +25,8 @@ INCLUDES=-I $(LAPACKE_HEADER_PATH) -I $(CBLAS_HEADER_PATH) -include $(LAPACKE_HE
 
 ifeq ($(OS),Windows_NT)
 
-L1_REMOVE=$(subst /,\\,$(ARCH_OBJS)) a.out
-L2_REMOVE=$(L1_REMOVE) $(OUTPUTS)
+L1_REMOVE=$(subst /,\\,$(ARCH_OBJS) $(OBJECTS)) a.out
+L2_REMOVE=$(L1_REMOVE)
 else
 L1_REMOVE=$(ARCH_OBJS) a.out
 L2_REMOVE=$(L1_REMOVE) $(OUTPUTS)

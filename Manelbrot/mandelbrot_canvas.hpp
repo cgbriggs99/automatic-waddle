@@ -20,6 +20,18 @@ private:
 //	std::complex<long double> offset;
 //	int poll;
 //	TextField *click_pos;
+
+	void computeMandelbrotThreaded(int id) override {
+		for(int i = id; i < this->getWidth(); i += this->getMaxThreads()) {
+			for(int j = 0; j < this->getHeight(); j++) {
+				std::complex<long double> c;
+				c.real(((2.0F * i) / this->getWidth() - 1) / this->getZoom());
+				c.imag(((2.0F * j) / this->getHeight() - 1) / this->getZoom());
+				this->setPixel(i, j, mandelbrot(std::complex<long double>(0),
+					c + this->getOffset(), this->getPoll()));
+			}
+		}
+	}
 public:
 	MandelbrotCanvas(int x, int y, int width, int height, bool frame, TextField *click_pos) :
 		JuliaCanvas(std::complex<long double>(0), x, y, width, height, frame, click_pos) {
@@ -29,20 +41,20 @@ public:
 //		this->click_pos = click_pos;
 	}
 
-	void paint() override {
-		if(needs_update) {
-			needs_update = false;
-			for(int i = 0; i < this->getWidth(); i++) {
-				for(int j = 0; j < this->getHeight(); j++) {
-					std::complex<long double> c;
-					c.real(((2.0F * i) / this->getWidth() - 1) / zoom);
-					c.imag(((2.0F * j) / this->getHeight() - 1) / zoom);
-					setPixel(i, j, mandelbrot(std::complex<long double>(0), c + offset, this->poll));
-				}
-			}
-			//antialias();
-		}
-	}
+//	void paint() override {
+//		if(needs_update) {
+//			needs_update = false;
+//			for(int i = 0; i < this->getWidth(); i++) {
+//				for(int j = 0; j < this->getHeight(); j++) {
+//					std::complex<long double> c;
+//					c.real(((2.0F * i) / this->getWidth() - 1) / zoom);
+//					c.imag(((2.0F * j) / this->getHeight() - 1) / zoom);
+//					setPixel(i, j, mandelbrot(std::complex<long double>(0), c + offset, this->poll));
+//				}
+//			}
+//			//antialias();
+//		}
+//	}
 //
 //	void setZoom(long double zoom) {
 //		this->zoom = zoom;

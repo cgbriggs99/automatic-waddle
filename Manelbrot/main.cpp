@@ -82,14 +82,14 @@ void text2(const unsigned char *str, void *mandel) {
 	MandelbrotCanvas *c = (MandelbrotCanvas *) mandel;
 	long double scale;
 	sscanf((char *) str, "%Lf", &scale);
-	c->setX(scale);
+	c->setOffsetX(scale);
 }
 
 void text3(const unsigned char *str, void *mandel) {
 	MandelbrotCanvas *c = (MandelbrotCanvas *) mandel;
 	long double scale;
 	sscanf((char *) str, "%Lf", &scale);
-	c->setY(scale);
+	c->setOffsetY(scale);
 }
 
 void text4(const unsigned char *str, void *mandel) {
@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
 	MandelbrotCanvas *canvas = new MandelbrotCanvas(0, 0, HEIGHT, HEIGHT, true, click_pos);
 
 	Renderer::getSingleton()->registerVisible(new Background(1, 1, 1, 1), 0);
-	Renderer::getSingleton()->registerVisible(canvas, 1);
+	Renderer::getSingleton()->registerVisible(canvas, 2);
 	Renderer::getSingleton()->registerVisible(new TextField(GLUT_BITMAP_HELVETICA_18, (char *) "Current Zoom:\n"
 			, HEIGHT + 25, 400, makeColor4i(0, 0, 0, 255)), 1);
 	Renderer::getSingleton()->registerVisible(new TextField(GLUT_BITMAP_HELVETICA_18, (char *) "Current Position:\n"

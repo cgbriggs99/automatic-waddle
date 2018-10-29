@@ -14,8 +14,8 @@
 #include <stdlib.h>
 #include <GL/gl.h>
 #include <GL/glut.h>
-#include <pthread.h>
 #include "idle.hpp"
+#include <thread>
 //#include <C:/freeglut/include/GL/freeglut.h>
 
 class Layer {
@@ -48,6 +48,13 @@ public:
 	}
 
 	void render() {
+		//std::vector<std::thread *> threads;
+//		for(int i = 0; i < len; i++) {
+//			threads.push_back(new std::thread(this->to_draw[i]->draw, this->to_draw[i]));
+//		}
+//		for(int i = 0; i < len; i++) {
+//			threads[i]->join();
+//		}
 		for(int i = 0; i < len; i++) {
 			this->to_draw[i]->draw();
 		}
@@ -60,8 +67,11 @@ private:
 	Layer **layers;
 	int len;
 	int width, height;
+	bool rendering;
 
 	color_t *data;
+
+
 	static Renderer *singleton;
 
 	Renderer() {
@@ -72,6 +82,7 @@ private:
 		this->data = (color_t *) calloc(this->width * this->height, sizeof(color_t));
 		needs_update = true;
 		UpdateCommandReceiver::getSingleton()->registerObserver(this);
+		rendering = false;
 	}
 
 public :
@@ -108,21 +119,27 @@ public :
 
 	void render() {
 		if(needs_update) {
+			this->rendering = true;
 			for(int i = 0; i < len; i++) {
 				this->layers[i]->render();
-				glutSwapBuffers();
 			}
 			glutSwapBuffers();
 			needs_update = false;
+			this->rendering = false;
 		}
 	}
 
 	int getWaitMilis() override {
-		return (1000);
+		return (10);
 	}
 
-	void onIdle() {
+	void onIdle() override {
+		this->setUpdate(true);
 		render();
+	}
+
+	bool getDoIdle() override {
+		return (!this->rendering);
 	}
 };
 

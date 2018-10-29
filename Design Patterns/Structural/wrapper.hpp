@@ -10,6 +10,13 @@
 
 namespace design_patterns {
 
+class Wrapper {
+public:
+	virtual ~Wrapper() = 0;
+
+	virtual void wrapperMethod() = 0;
+};
+
 }
 
 #endif /* STRUCTURAL_WRAPPER_HPP_ */
