@@ -16,13 +16,17 @@ protected:
 	static _T *singleton;
 
 public:
-	virtual ~Singleton() = 0;
+	virtual ~Singleton() {};
 
 	static _T *getSingleton() {
 		if(singleton == nullptr) {
 			singleton = new _T();
 		}
 		return (singleton);
+	}
+
+	static void resetSingleton() {
+		singleton = nullptr;
 	}
 };
 }
