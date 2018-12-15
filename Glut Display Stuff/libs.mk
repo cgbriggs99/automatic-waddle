@@ -1,0 +1,1 @@
+INCLUDES=C:\freeglut\include

@@ -8,7 +8,7 @@
 #ifndef COMPCHEM_HPP_
 #define COMPCHEM_HPP_
 
-#include "arrays.hpp"
+#include "Base/base.hpp"
 #include "input.hpp"
 #include "linker.hpp"
 #include "main.hpp"

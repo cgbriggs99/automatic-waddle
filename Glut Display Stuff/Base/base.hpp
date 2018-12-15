@@ -12,5 +12,7 @@
 #include "Command.hpp"
 #include "Observer.hpp"
 #include "Observable.hpp"
+#include "Visible.hpp"
+#include "Report.hpp"
 
 #endif /* BASE_HPP_ */

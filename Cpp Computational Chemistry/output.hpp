@@ -15,23 +15,23 @@
 namespace compchem {
 using namespace compchem;
 
-extern void printDists(Molecule *molecule);
+extern void printDists(Molecule &molecule);
 
-extern void printAngles(Molecule *molecule);
+extern void printAngles(Molecule &molecule);
 
-extern void printRotor(Molecule *molecule);
+extern void printRotor(Molecule &molecule);
 
-extern void printMoments(Molecule *molecule);
+extern void printMoments(Molecule &molecule);
 
-extern void printEigenvalues(Molecule *molecule);
+extern void printEigenvalues(Molecule &molecule);
 
-extern void printFreqs(Molecule *molecule);
+extern void printFreqs(Molecule &molecule);
 
-extern void printSCF(Molecule *molecule);
+extern void printSCF(Molecule &molecule);
 
-extern void printArray(char *title, Array<double> *data);
+extern void printArray(std::string title, compchem::FortranArray<double> &data);
 
-extern void printMP2(Molecule *molecule);
+extern void printMP2(Molecule &molecule);
 
 }
 

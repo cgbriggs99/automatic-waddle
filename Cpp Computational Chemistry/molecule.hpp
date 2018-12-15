@@ -11,10 +11,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include "compchem.hpp"
+#include <vector>
 
 namespace compchem {
-using namespace array;
-using namespace compchem;
 
 class Molecule;
 
@@ -22,20 +21,22 @@ class Atom {
 	friend class Molecule;
 	friend void compchem::input(compchem::Molecule **, FILE *);
 private:
-	Vector<double> pos;
+	compchem::FortranArray<double> &pos;
 	double mass;
 	double true_charge;
 	int num;
 	int charge;
 public:
-	Atom() :
-			pos(3) {
+	Atom():
+		pos(*(new compchem::FortranArray<double>(compchem::Dimension(3)))) {
 		this->mass = 0;
 		this->true_charge = 0;
 		this->num = 0;
 		this->charge = 0;
 	}
 	Atom(int num, double x, double y, double z);
+
+	~Atom();
 
 	int getCharge() {
 		return (charge);
@@ -49,7 +50,7 @@ public:
 		return (num);
 	}
 
-	array::Vector<double>& getPos() {
+	compchem::FortranArray<double> &getPos() {
 		return (pos);
 	}
 
@@ -60,19 +61,6 @@ public:
 	void setTrueCharge(double trueCharge) {
 		true_charge = trueCharge;
 	}
-};
-
-template<class T>
-class TEArray: Array<T> {
-private:
-public:
-	TEArray(int dim, ...);
-	TEArray(T *data, int dim, ...);	//Does not copy. Simply sets the data pointer.
-	TEArray(const Array<T> &arr);	//Does copy.
-	~TEArray();
-	T &operator()(int i, int j, int k, int l);
-
-	T *getArray();
 };
 
 class Molecule {
@@ -97,62 +85,61 @@ private:
 	double scf_eps;
 
 	//Atom data.
-	Atom *atoms;
+	std::vector<Atom> &atoms;
 	int numatoms;
 	double total_mass;
 
 	//Geometry data.
-	Array<double> *distances;
-	Array<double> *angles;
-	Array<double> *plane_angles;
-	Array<double> *torsion_angles;
-	Vector<double> center_of_mass;
-	Array<double> inertial_moments;	//TODO needs a getter.
-	Array<double> principle_moments;
-	Array<double> rotational_constants;
+	compchem::FortranArray<double> *distances;
+	compchem::FortranArray<double> *angles;
+	compchem::FortranArray<double> *plane_angles;
+	compchem::FortranArray<double> *torsion_angles;
+	compchem::FortranArray<double> *center_of_mass;
+	compchem::FortranArray<double> *inertial_moments;	//TODO needs a getter.
+	compchem::FortranArray<double> *principle_moments;
+	compchem::FortranArray<double> *rotational_constants;
 
 	rotor_t rotor;
 
 	//Harmonic data.
-	Array<double> *hessian;
-	int hessian_size;
-	Array<double> *hessian_eigs;
-	Array<double> *vibrations;
+	compchem::FortranArray<double> *hessian;
+	compchem::FortranArray<double> *hessian_eigs;
+	compchem::FortranArray<double> *vibrations;
 
 	//Energies.
 	double enuc;
 	double scf_energy;
-	Array<double> *molecular_energies;
+	compchem::FortranArray<double> *molecular_energies;
 	double mp2_correction;
 	double mp2_energy;
 
 	//Integrals.
-	Array<double> *overlap;
-	Array<double> *kinetic;
-	Array<double> *attraction;
-	Array<double> *hamiltonian;
-	TEArray<double> *two_electron;
-	TEArray<double> *mo_two_electron;
-	Array<double> *spin_two_electron;
+	compchem::FortranArray<double> *overlap;
+	compchem::FortranArray<double> *kinetic;
+	compchem::FortranArray<double> *attraction;
+	compchem::FortranArray<double> *hamiltonian;
+	compchem::FortranArray<double> *two_electron;
+	compchem::FortranArray<double> *mo_two_electron;
+	compchem::FortranArray<double> *spin_two_electron;
 
 	//Important matrices.
-	Array<double> *orthogonal;
-	Array<double> *orthogonal_t;
-	Array<double> *orthogonal_eigvs;
-	Array<double> *fock;
-	Array<double> *density;
-	Array<double> *molecular_orbitals;
-	Array<double> *mux, *muy, *muz;
-	Vector<double> dipole;
-	Array<double> *spin_fock;
+	compchem::FortranArray<double> *orthogonal;
+	compchem::FortranArray<double> *orthogonal_t;
+	compchem::FortranArray<double> *orthogonal_eigvs;
+	compchem::FortranArray<double> *fock;
+	compchem::FortranArray<double> *density;
+	compchem::FortranArray<double> *molecular_orbitals;
+	compchem::FortranArray<double> *mux, *muy, *muz;
+	compchem::FortranArray<double> *dipole;
+	compchem::FortranArray<double> *spin_fock;
 
 	//CCSD intermediates;
-	Array<double> *t1_amplitudes;
-	Array<double> *t2_amplitudes;
-	Array<double> *inter_f;
-	Array<double> *inter_w;
-	Array<double> *tpe1;
-	Array<double> *tpe2;
+	compchem::FortranArray<double> *t1_amplitudes;
+	compchem::FortranArray<double> *t2_amplitudes;
+	compchem::FortranArray<double> *inter_f;
+	compchem::FortranArray<double> *inter_w;
+	compchem::FortranArray<double> *tpe1;
+	compchem::FortranArray<double> *tpe2;
 public:
 	/*
 	 * Calculation methods.
@@ -186,35 +173,35 @@ public:
 
 	void computeDLExcited();
 
-	Molecule(Atom *atoms, int num, double scf_eps = 0.000000000001);
+	Molecule(std::vector<Atom> &atoms, int num, double scf_eps = 0.000000000001);
 	~Molecule();
 
-	Array<double>* getAngles() {
-		return (angles);
+	compchem::FortranArray<double> &getAngles() {
+		return (*angles);
 	}
 
-	Atom* getAtoms() {
+	std::vector<Atom> &getAtoms() {
 		return (atoms);
 	}
 
-	Array<double>* getAttraction() {
-		return (attraction);
+	compchem::FortranArray<double> &getAttraction() {
+		return (*attraction);
 	}
 
 	filedesc getBlocks() {
 		return (blocks);
 	}
 
-	Array<double>* getDensity() {
-		return (density);
+	compchem::FortranArray<double> &getDensity() {
+		return (*density);
 	}
 
-	Vector<double> &getDipole() {
-		return (dipole);
+	compchem::FortranArray<double> &getDipole() {
+		return (*dipole);
 	}
 
-	Array<double>* getDistances() {
-		return (distances);
+	compchem::FortranArray<double> &getDistances() {
+		return (*distances);
 	}
 
 	int getElectrons() {
@@ -225,52 +212,52 @@ public:
 		return (enuc);
 	}
 
-	Array<double>* getFock() {
-		return (fock);
+	compchem::FortranArray<double> &getFock() {
+		return (*fock);
 	}
 
-	Array<double>* getHamiltonian() {
-		return (hamiltonian);
+	compchem::FortranArray<double> &getHamiltonian() {
+		return (*hamiltonian);
 	}
 
-	Array<double>* getHessian() {
-		return (hessian);
+	compchem::FortranArray<double> &getHessian() {
+		return (*hessian);
 	}
 
-	Array<double>* getHessianEigs() {
-		return (hessian_eigs);
+	compchem::FortranArray<double> &getHessianEigs() {
+		return (*hessian_eigs);
 	}
 
 	int getHessianSize() {
-		return (hessian_size);
+		return (this->hessian->getShape()[0]);
 	}
 
-	Array<double>* getInterF() {
-		return (inter_f);
+	compchem::FortranArray<double> &getInterF() {
+		return (*inter_f);
 	}
 
-	Array<double>* getInterW() {
-		return (inter_w);
+	compchem::FortranArray<double> &getInterW() {
+		return (*inter_w);
 	}
 
-	Array<double>* getKinetic() {
-		return (kinetic);
+	compchem::FortranArray<double> &getKinetic() {
+		return (*kinetic);
 	}
 
 	char* getMemory() {
 		return (memory);
 	}
 
-	TEArray<double>* getMoTwoElectron() {
-		return (mo_two_electron);
+	compchem::FortranArray<double> &getMoTwoElectron() {
+		return (*mo_two_electron);
 	}
 
-	Array<double>* getMolecularEnergies() {
-		return (molecular_energies);
+	compchem::FortranArray<double> &getMolecularEnergies() {
+		return (*molecular_energies);
 	}
 
-	Array<double>* getMolecularOrbitals() {
-		return (molecular_orbitals);
+	compchem::FortranArray<double> &getMolecularOrbitals() {
+		return (*molecular_orbitals);
 	}
 
 	double getMp2Correction() {
@@ -281,16 +268,16 @@ public:
 		return (mp2_energy);
 	}
 
-	Array<double>* getMux() {
-		return (mux);
+	compchem::FortranArray<double> &getMux() {
+		return (*mux);
 	}
 
-	Array<double>* getMuy() {
-		return (muy);
+	compchem::FortranArray<double> &getMuy() {
+		return (*muy);
 	}
 
-	Array<double>* getMuz() {
-		return (muz);
+	compchem::FortranArray<double> &getMuz() {
+		return (*muz);
 	}
 
 	int getNumatoms() {
@@ -305,32 +292,32 @@ public:
 		return (orbitals);
 	}
 
-	Array<double>* getOrthogonal() {
-		return (orthogonal);
+	compchem::FortranArray<double> &getOrthogonal() {
+		return (*orthogonal);
 	}
 
-	Array<double>* getOrthogonalEigvs() {
-		return (orthogonal_eigvs);
+	compchem::FortranArray<double> &getOrthogonalEigvs() {
+		return (*orthogonal_eigvs);
 	}
 
-	Array<double>* getOrthogonalT() {
-		return (orthogonal_t);
+	compchem::FortranArray<double> &getOrthogonalT() {
+		return (*orthogonal_t);
 	}
 
-	Array<double>* getOverlap() {
-		return (overlap);
+	compchem::FortranArray<double> &getOverlap() {
+		return (*overlap);
 	}
 
-	Array<double>* getPlaneAngles() {
-		return (plane_angles);
+	compchem::FortranArray<double> &getPlaneAngles() {
+		return (*plane_angles);
 	}
 
-	Array<double>& getPrincipleMoments() {
-		return (principle_moments);
+	compchem::FortranArray<double> &getPrincipleMoments() {
+		return (*principle_moments);
 	}
 
-	Array<double>& getRotationalConstants() {
-		return (rotational_constants);
+	compchem::FortranArray<double> &getRotationalConstants() {
+		return (*rotational_constants);
 	}
 
 	rotor_t getRotor() {
@@ -341,52 +328,52 @@ public:
 		return (scf_energy);
 	}
 
-	Array<double>* getSpinFock() {
-		return (spin_fock);
+	compchem::FortranArray<double> &getSpinFock() {
+		return (*spin_fock);
 	}
 
-	Array<double>* getSpinTwoElectron() {
-		return (spin_two_electron);
+	compchem::FortranArray<double> &getSpinTwoElectron() {
+		return (*spin_two_electron);
 	}
 
-	Array<double>* getT1Amplitudes() {
-		return (t1_amplitudes);
+	compchem::FortranArray<double> &getT1Amplitudes() {
+		return (*t1_amplitudes);
 	}
 
-	Array<double>* getT2Amplitudes() {
-		return (t2_amplitudes);
+	compchem::FortranArray<double> &getT2Amplitudes() {
+		return (*t2_amplitudes);
 	}
 
-	Array<double>* getTorsionAngles() {
-		return (torsion_angles);
+	compchem::FortranArray<double> &getTorsionAngles() {
+		return (*torsion_angles);
 	}
 
 	double getTotalMass() {
 		return (total_mass);
 	}
 
-	Array<double>* getTpe1() {
-		return (tpe1);
+	compchem::FortranArray<double> &getTpe1() {
+		return (*tpe1);
 	}
 
-	Array<double>* getTpe2() {
-		return (tpe2);
+	compchem::FortranArray<double> &getTpe2() {
+		return (*tpe2);
 	}
 
-	TEArray<double>* getTwoElectron() {
-		return (two_electron);
+	compchem::FortranArray<double> &getTwoElectron() {
+		return (*two_electron);
 	}
 
 	void setEnuc(double enuc) {
 		this->enuc = enuc;
 	}
 
-	Vector<double>& getCenterOfMass() {
-		return (center_of_mass);
+	compchem::FortranArray<double> &getCenterOfMass() {
+		return (*center_of_mass);
 	}
 
-	Array<double>& getInertialMoments() {
-		return (inertial_moments);
+	compchem::FortranArray<double> &getInertialMoments() {
+		return (*inertial_moments);
 	}
 };
 
@@ -397,105 +384,6 @@ double amu(int z);
 int valence(int z);
 
 int orbitals(int z);
-
-template<class T>
-TEArray<T>::TEArray(int dim, ...) {
-	va_list lst;
-	va_start(lst, dim);
-
-	this->dim = dim;
-	this->sizes = (size_t *) calloc(dim, sizeof(size_t));
-	this->total = 1;
-
-	for (int i = 0; i < dim; i++) {
-		this->sizes[i] = va_arg(lst, int);
-		this->total *= this->sizes[i];
-	}
-	this->data = new T[this->total];
-	this->freeOnDelete = true;
-	va_end(lst);
-}
-
-template<class T>
-TEArray<T>::TEArray(T *data, int dim, ...) {
-	va_list lst;
-	va_start(lst, dim);
-
-	this->dim = dim;
-	this->sizes = (size_t *) calloc(dim, sizeof(size_t));
-	this->total = 1;
-
-	for (int i = 0; i < dim; i++) {
-		this->sizes[i] = va_arg(lst, int);
-		this->total *= this->sizes[i];
-	}
-	this->data = data;
-	this->freeOnDelete = false;
-	va_end(lst);
-}
-
-template<class T>
-TEArray<T>::TEArray(const Array<T> &arr) {
-	this->dim = arr.dim;
-	this->total = arr.total;
-	this->data = new T[this->total];
-	this->sizes = (size_t *) calloc(this->dim, sizeof(size_t));
-	for (int i = 0; i < this->total; i++) {
-		T temp = arr.data[i];
-		this->data[i] = temp;
-	}
-	for (int i = 0; i < this->dim; i++) {
-		this->sizes[i] = arr.sizes[i];
-	}
-	this->freeOnDelete = true;
-}
-
-template<class T>
-TEArray<T>::~TEArray() {
-	puts("debug15");
-	fflush(stdout);
-	free(this->sizes);
-	puts("debug17");
-		fflush(stdout);
-	if (this->freeOnDelete) {
-		delete [] this->data;
-	}
-	puts("debug16");
-	fflush(stdout);
-}
-
-template<class T>
-T &TEArray<T>::operator()(int i, int j, int k, int l) {
-	size_t ij, kl, subsc;
-	if (i < j) {
-		ij = ((long) j * (long) (j + 1)) / 2 + i;
-	} else {
-		ij = ((long) i * (long) (i + 1)) / 2 + j;
-	}
-
-	if (k < l) {
-		kl = ((long) l * (long) (l + 1)) / 2 + k;
-	} else {
-		kl = ((long) k * (long) (k + 1)) / 2 + l;
-	}
-
-
-	if (ij < kl) {
-		subsc = ((long) kl * (long) (kl + 1)) / 2 + ij;
-	} else {
-		subsc = ((long) ij * (long) (ij + 1)) / 2 + kl;
-	}
-	if(subsc > this->total) {
-		throw array::ArrayIndexOutOfBoundsException();
-	}
-
-	return (*&(this->data[subsc]));
-}
-
-template<class T>
-T *TEArray<T>::getArray() {
-	return (this->data);
-}
 
 }
 

@@ -5,18 +5,14 @@
  *      Author: connor
  */
 
+
+
+#ifndef __DIMENSION_CPP__
+#define __DIMENSION_CPP__
+
 #include "arrays.hpp"
 
-constexpr compchem::Dimension::Dimension(int dim0, int dim1 = 0, int dim2 = 0, int dim3 = 0,
-		int dim4 = 0, int dim5 = 0, int dim6 = 0) {
-	shape = {dim0, dim1, dim2, dim3, dim4, dim5, dim6};
-}
-
-int compchem::Dimension::operator[](int ind) const {
-	return (shape[ind]);
-}
-
-bool operator==(compchem::Dimension dim1, compchem::Dimension dim2) const {
+bool compchem::operator==(compchem::Dimension dim1, compchem::Dimension dim2) {
 	for(int i = 0; i < 7; i++) {
 		if(dim1[i] != dim2[i]) {
 			return (false);
@@ -34,3 +30,20 @@ int compchem::Dimension::getDimensionality() {
 	return (7);
 }
 
+bool compchem::operator!=(compchem::Dimension dim1, compchem::Dimension dim2) {
+	for(int i = 0; i < 7; i++) {
+		if(dim1[i] != dim2[i]) {
+			return (true);
+		}
+	}
+	return (false);
+}
+
+compchem::Dimension &compchem::Dimension::operator=(compchem::Dimension const &dim) {
+	for(int i = 0; i < 7; i++) {
+		this->shape[i] = dim.shape[i];
+	}
+	return (*this);
+}
+
+#endif

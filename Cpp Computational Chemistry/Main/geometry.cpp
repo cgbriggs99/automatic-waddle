@@ -27,9 +27,9 @@ int main(int argc, char **argv) {
 	mol->rotations();
 	puts("debug2");
 	fflush(stdout);
-	printDists(mol);
-	printAngles(mol);
-	printMoments(mol);
+	printDists(*mol);
+	printAngles(*mol);
+	printMoments(*mol);
 	puts("debug3");
 	fflush(stdout);
 	delete mol;
@@ -40,5 +40,4 @@ int main(int argc, char **argv) {
 	fflush(stdout);
 	return (0);
 }
-
 

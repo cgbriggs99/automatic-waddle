@@ -5,9 +5,24 @@
  *      Author: connor
  */
 
+
+
+#ifndef __ARRAYS_CPP__
+#define __ARRAYS_CPP__
+
 #include "arrays.hpp"
 
+template<typename _T>
+compchem::Dimension const compchem::FortranArray<_T>::getShape();
 
+template<typename _T>
+int const compchem::FortranArray<_T>::getShape(int ind);
+
+template<typename _T>
+_T *const compchem::FortranArray<_T>::getData();
+
+template<typename _T>
+int const compchem::FortranArray<_T>::getSize();
 
 template<typename _T>
 compchem::FortranArray<_T>::FortranArray(compchem::Dimension dim) {
@@ -20,9 +35,20 @@ compchem::FortranArray<_T>::FortranArray(compchem::Dimension dim, std::initializ
 	this->dim = dim;
 	this->data = new _T[this->getSize()];
 	for(int i = 0; i < this->getSize(); i++) {
-		this->data[i] = list[i];
+		this->data[i] = list.begin()[i];
 	}
 }
+
+template<typename _T>
+compchem::FortranArray<_T>::FortranArray(std::initializer_list<_T> list) {
+	this->dim = list.size();
+	this->data = new _T[this->getSize()];
+	for(int i = 0; i < list.size(); i++) {
+		this->data[i] = list.begin()[i];
+	}
+}
+
+
 
 template<typename _T>
 compchem::FortranArray<_T>::FortranArray(compchem::Dimension dim, _T *values) {
@@ -39,7 +65,8 @@ compchem::FortranArray<_T>::FortranArray(const FortranArray<_T> &arr) {
 	this->data = new _T[this->getSize()];
 	for(int i = 0; i < this->getSize(); i++) {
 		//Copy.
-		new(&(this->data[i])) _T(&(arr.data[i]));
+//		new(&(this->data[i])) _T(&(arr.data[i]));
+		this->data[i] = arr.data[i];
 	}
 }
 
@@ -62,8 +89,8 @@ _T *compchem::FortranArray<_T>::getData() const {
 }
 
 template<typename _T>
-_T &compchem::FortranArray<_T>::operator()(int ind0, int ind1 = 0, int ind2 = 0,
-		int ind3 = 0, int ind4 = 0, int ind5 = 0, int ind6 = 0) {
+_T &compchem::FortranArray<_T>::operator()(int ind0, int ind1, int ind2,
+		int ind3, int ind4, int ind5, int ind6) {
 	int ind = 0;
 	int size = 1;
 	std::array<int, 7> inds = {ind0, ind1, ind2, ind3, ind4, ind5, ind6};
@@ -78,12 +105,12 @@ _T &compchem::FortranArray<_T>::operator()(int ind0, int ind1 = 0, int ind2 = 0,
 		ind += (inds[i] - 1) * size;
 		inds[i] *= dim[i];
 	}
-	return (&(data[ind]));
+	return ((data[ind]));
 }
 
 template<typename _T>
-const _T &compchem::FortranArray<_T>::operator()(int ind0, int ind1 = 0, int ind2 = 0,
-		int ind3 = 0, int ind4 = 0, int ind5 = 0, int ind6 = 0) const {
+const _T &compchem::FortranArray<_T>::operator()(int ind0, int ind1, int ind2,
+		int ind3, int ind4, int ind5, int ind6) const {
 	int ind = 0;
 	int size = 1;
 	std::array<int, 7> inds = {ind0, ind1, ind2, ind3, ind4, ind5, ind6};
@@ -102,218 +129,184 @@ const _T &compchem::FortranArray<_T>::operator()(int ind0, int ind1 = 0, int ind
 }
 
 template<typename _T>
+compchem::FortranArray<_T> &compchem::FortranArray<_T>::operator=(const FortranArray<_T> &b) {
+	delete[] this->data;
+
+	this->dim = b.dim;
+	this->data = new _T[b.getSize()];
+
+	for(int i = 0; i < this->getSize(); i++) {
+		this->data[i] = b.data[i];
+	}
+
+	return (*this);
+}
+
+template<typename _T>
 compchem::FortranArray<_T> &compchem::FortranArray<_T>::operator+=(const FortranArray<_T> &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread(FortranArray<_T>::__addition_thread, this, b, i);
+	if(this->getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (this);
+	for(int i = 0; i < this->getSize(); i++) {
+		this->data[i] += b.data[i];
+	}
+
+	return (*this);
 }
 
 template<typename _T>
 compchem::FortranArray<_T> &compchem::FortranArray<_T>::operator-=(const FortranArray<_T> &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread(FortranArray<_T>::__subtraction_thread, this, b, i);
+	if(this->getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (this);
+	for(int i = 0; i < this->getSize(); i++) {
+		this->data[i] -= b.data[i];
+	}
+
+	return (*this);
 }
 
 template<typename _T>
 compchem::FortranArray<_T> &compchem::FortranArray<_T>::operator*=(const FortranArray<_T> &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread((void (*)(FortranArray<_T> *, FortranArray<_T> *, int))
-				FortranArray<_T>::__multiplication_thread, this, b, i);
+	if(this->getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (this);
+	for(int i = 0; i < this->getSize(); i++) {
+		this->data[i] *= b.data[i];
+	}
+
+	return (*this);
 }
 
 template<typename _T>
 compchem::FortranArray<_T> &compchem::FortranArray<_T>::operator*=(const _T &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread((void (*)(FortranArray<_T> *, _T &, int))
-				FortranArray<_T>::__multiplication_thread, this, b, i);
+	if(this->getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (this);
+	for(int i = 0; i < this->getSize(); i++) {
+		this->data[i] *= b;
+	}
+
+	return (*this);
 }
 
 template<typename _T>
 compchem::FortranArray<_T> &compchem::FortranArray<_T>::operator/=(const _T &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread((void (*)(FortranArray<_T> *, _T &, int))
-				FortranArray<_T>::__division_thread, this, b, i);
+	for(int i = 0; i < this->getSize(); i++) {
+		this->data[i] /= b;
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (this);
+	return (*this);
 }
 
 template<typename _T>
-compchem::FortranArray<_T> operator+(compchem::FortranArray<_T> a, const compchem::FortranArray<_T> &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	compchem::FortranArray<_T> out(a);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread(compchem::FortranArray<_T>::__addition_thread, &out, b, i);
+compchem::FortranArray<_T> &compchem::FortranArray<_T>::operator/=(const FortranArray<_T> &b) {
+	if(this->getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
+
+	for(int i = 0; i < this->getSize(); i++) {
+		this->data[i] /= b.data[i];
 	}
-	free(threads);
+	return (*this);
+}
+
+template<typename _T>
+compchem::FortranArray<_T> compchem::operator+(compchem::FortranArray<_T> a, const compchem::FortranArray<_T> &b) {
+	compchem::FortranArray<_T> *out = new compchem::FortranArray<_T>(a.dim);
+
+	if(a.getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
+	}
+
+	for(int i = 0; i < a.getSize(); i++) {
+		out = a.data[i] + b.data[i];
+	}
+
+	return (*out);
+}
+
+template<typename _T>
+compchem::FortranArray<_T> compchem::operator-(compchem::FortranArray<_T> a, const compchem::FortranArray<_T> &b) {
+
+	if(a.getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
+	}
+	compchem::FortranArray<_T> out(a.getShape());
+
+	for(int i = 0; i < a.getSize(); i++) {
+		out.data[i] = a.data[i] - b.data[i];
+	}
 
 	return (out);
 }
 
 template<typename _T>
-compchem::FortranArray<_T> operator-(compchem::FortranArray<_T> a, const compchem::FortranArray<_T> &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
+compchem::FortranArray<_T> compchem::operator*(compchem::FortranArray<_T> a, _T k) {
+	compchem::FortranArray<_T> *out = new compchem::FortranArray<_T>(a.dim);
 
-	compchem::FortranArray<_T> out(a);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread(compchem::FortranArray<_T>::__subtraction_thread, &out, b, i);
+	for(int i = 0; i < a.getSize(); i++) {
+		out->data[i] = a.data[i] * k;
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (out);
+	return (*out);
 }
 
 template<typename _T>
-compchem::FortranArray<_T> operator*(compchem::FortranArray<_T> a, _T k) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
+compchem::FortranArray<_T> compchem::operator*(_T k, compchem::FortranArray<_T> a) {
+	compchem::FortranArray<_T> *out = new compchem::FortranArray<_T>(a.dim);
 
-	compchem::FortranArray<_T> out(a);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread((void (*)(compchem::FortranArray<_T> *, _T &, int))
-				compchem::FortranArray<_T>::__multiplication_thread, &out, k, i);
+	for(int i = 0; i < a.getSize(); i++) {
+		out->data[i] = a.data[i] * k;
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (out);
-}
-
-template<typename _T>
-compchem::FortranArray<_T> operator*(_T k, compchem::FortranArray<_T> a) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	compchem::FortranArray<_T> out(a);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread((void (*)(compchem::FortranArray<_T> *, _T &, int))
-				compchem::FortranArray<_T>::__multiplication_thread, &out, k, i);
-	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
-
-	return (out);
+	return (*out);
 }
 
 //Standard Fortran * operator. Not matrix multiplication.
 template<typename _T>
-compchem::FortranArray<_T> operator*(compchem::FortranArray<_T> a, const compchem::FortranArray<_T> &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	compchem::FortranArray<_T> out(a);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread((void (*)(compchem::FortranArray<_T> *, compchem::FortranArray<_T> *, int))
-				compchem::FortranArray<_T>::__multiplication_thread, &out, b, i);
+compchem::FortranArray<_T> compchem::operator*(compchem::FortranArray<_T> a, const compchem::FortranArray<_T> &b) {
+	if(a.getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (out);
+	compchem::FortranArray<_T> *out = new compchem::FortranArray<_T>(a.dim);
+
+	for(int i = 0; i < a.getSize(); i++) {
+		out->data[i] = a.data[i] * b.data[i];
+	}
+
+	return (*out);
 }
 
 template<typename _T>
-compchem::FortranArray<_T> operator/(compchem::FortranArray<_T> a, const compchem::FortranArray<_T> &b) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
-
-	compchem::FortranArray<_T> out(a);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread((void (*)(compchem::FortranArray<_T> *, compchem::FortranArray<_T> *, int))
-				compchem::FortranArray<_T>::__division_thread, &out, b, i);
+compchem::FortranArray<_T> compchem::operator/(compchem::FortranArray<_T> a, const compchem::FortranArray<_T> &b) {
+	if(a.getShape() != b.getShape()) {
+		throw(new compchem::SizeMismatchException());
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (out);
+	compchem::FortranArray<_T> *out = new compchem::FortranArray<_T>(a.dim);
+
+	for(int i = 0; i < a.getSize(); i++) {
+		out->data[i] = a.data[i] / b.data[i];
+	}
+
+	return (*out);
 }
 
 template<typename _T>
-compchem::FortranArray<_T> operator/(compchem::FortranArray<_T> a, _T k) {
-	std::thread **threads = (std::thread **) malloc(sizeof(void *) * __THREAD_COUNT__);
+compchem::FortranArray<_T> compchem::operator/(compchem::FortranArray<_T> a, _T k) {
+	compchem::FortranArray<_T> *out = new compchem::FortranArray<_T>(a.dim);
 
-	compchem::FortranArray<_T> out(a);
-
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i] = new std::thread((void (*)(compchem::FortranArray<_T> *, _T &, int))
-				compchem::FortranArray<_T>::__division_thread, &out, k, i);
+	for(int i = 0; i < a.getSize(); i++) {
+		out->data[i] = a.data[i] / k;
 	}
-	for(int i = 0; i < __THREAD_COUNT__; i++) {
-		threads[i]->join();
-		delete(threads[i]);
-	}
-	free(threads);
 
-	return (out);
+	return (*out);
 }
 
 template<typename _T>
@@ -326,17 +319,11 @@ compchem::FortranArray<_T>::operator compchem::FortranArray<_U>() {
 	return (out);
 }
 
-template<typename _T>
-template<typename _U>
-explicit compchem::FortranArray<_T>::operator _U *() {
-	return (this->data);
-}
-
 /*
  * Friends that define useful connections to lapack and blas.
  */
 template<typename _T>
-compchem::FortranArray<_T> &matmult(compchem::FortranArray<_T> a1, compchem::FortranArray<_T> a2) {
+compchem::FortranArray<_T> &compchem::matmult(compchem::FortranArray<_T> a1, compchem::FortranArray<_T> a2) {
 	//Use the basic algorithm at first. Later, may speed it up with CUDA.
 	if(a1.getShape().getDimensionality() != 2 || a2.getShape().getDimensionality() != 2) {
 		throw(new compchem::SizeMismatchException);
@@ -359,3 +346,30 @@ compchem::FortranArray<_T> &matmult(compchem::FortranArray<_T> a1, compchem::For
 	return (out);
 }
 
+template<typename _T>
+_T compchem::FortranArray<_T>::dotprod(FortranArray<_T> &b) {
+	if(this->getShape(1) != b.getShape(1)) {
+		throw(new compchem::SizeMismatchException);
+	}
+	_T accum = (*this)(0) * b(0);
+	for(int i = 1; i < this->getShape(1); i++) {
+		accum += (*this)(i) * b(i);
+	}
+	return (accum);
+}
+
+template<typename _T>
+compchem::FortranArray<_T> &compchem::FortranArray<_T>::crossprod(
+	compchem::FortranArray<_T> &b) {
+	if(this->getShape(1) != 3 || b.getShape(1) != 3) {
+		throw(new compchem::CrossProductException);
+	}
+	compchem::FortranArray<_T> *out = new FortranArray<_T>(Dimension(3));
+	(*out)(0) = (*this)(1) * b(2) - (*this)(2) * b(1);
+	(*out)(1) = (*this)(0) * b(2) - (*this)(2) * b(0);
+	(*out)(2) = (*this)(0) * b(1) - (*this)(1) * b(0);
+
+	return (*out);
+}
+
+#endif

@@ -12,10 +12,6 @@
 
 namespace NAME {
 
-class Report {
-public:
-	virtual ~Report() {};
-};
 
 }
 

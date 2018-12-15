@@ -12,19 +12,19 @@
 
 namespace compchem {
 
-struct ArrayIndexOutOfBoundsException : std::exception {
+struct ArrayIndexOutOfBoundsException: std::exception {
 	const char *what() const throw() {
 		return ("Array index out of bounds.");
 	}
 };
 
-struct CrossProductException : std::exception {
+struct CrossProductException: std::exception {
 	const char *what() const throw() {
 		return ("Invalid size to cross product.");
 	}
 };
 
-struct SizeMismatchException : std::exception {
+struct SizeMismatchException: std::exception {
 	const char *what() const throw() {
 		return ("Size mismatch between arguments.");
 	}

@@ -11,10 +11,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <lapacke.h>
 
 using namespace std;
 using namespace compchem;
-using namespace array;
 
 static int compare(const void *a, const void *b) {
 	if(*((double *) a) - *((double *) b) > 0) {
@@ -26,21 +26,25 @@ static int compare(const void *a, const void *b) {
 }
 
 void compchem::Molecule::harmonics() {
-	for (int i = 0; i < this->hessian_size; i++) {
-		for (int j = 0; j < this->hessian_size; j++) {
-			(*(this->hessian))(i, j) /= sqrt(
-					this->atoms[i / 3].mass * this->atoms[j / 3].mass);
+	for(int i = 0; i < this->hessian->getShape()[0]; i++) {
+		for(int j = 0; j < this->hessian->getShape()[0]; j++) {
+			this->hessian->subscript(i, j) /= sqrt(
+			    this->atoms[i / 3].getMass() * this->atoms[j / 3].getMass());
 		}
 	}
-	double *im = (double *) malloc(this->hessian_size * sizeof(double));
-	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'N', this->hessian_size,
-			this->hessian->getArray(), this->hessian_size,
-			this->hessian_eigs->getArray(), im, NULL, this->hessian_size, NULL, this->hessian_size);
+	compchem::FortranArray<double> im(this->hessian_eigs->getShape());
+	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'N', this->hessian->getShape()[0],
+	    this->hessian->getData(), this->hessian->getShape()[0],
+	    this->hessian_eigs->getData(), im.getData(), NULL,
+	    this->hessian->getShape()[0],
+	    NULL, this->hessian->getShape()[0]);
 
-	qsort(this->hessian_eigs->getArray(), this->hessian_size, sizeof(double), compare);
+	qsort(this->hessian_eigs->getData(), this->hessian->getShape()[0],
+	    sizeof(double), compare);
 
-	for(int i = 0; i < this->hessian_size; i++) {
-		(*(this->vibrations))(i) = sqrt((*(this->hessian_eigs))(i)) * 5140.697669352;
+	for(int i = 0; i < this->hessian->getShape()[0]; i++) {
+		this->vibrations->subscript(i) = sqrt(this->hessian_eigs->subscript(i))
+		    * 5140.697669352;
 	}
 }
 #endif

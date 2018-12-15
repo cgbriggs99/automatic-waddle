@@ -15,7 +15,7 @@ SOURCES=./Main/geometry.cpp ./Main/hessian.cpp ./Main/scf.cpp ./Main/mp2.cpp
 
 TARGETS=$(BASE_SOURCES) $(CHEM_SOURCES) $(CALC_SOURCES) ./Main/main.cpp base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF) $(SOURCES)
 #TARGETS=base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF) ./Main/main$(OBJ_SUFF) $(EXECS)
-DEPS=base$(ARCH_SUFF) chem$(ARCH_SUFF) calculations$(ARCH_SUFF) ./Main/main$(OBJ_SUFF) 
+DEPS=chem$(ARCH_SUFF) calculations$(ARCH_SUFF) ./Main/main$(OBJ_SUFF) base$(ARCH_SUFF) 
 OBJECTS=$(BASE_OBJECTS) $(CHEM_OBJECTS) $(CALC_OBJECTS) ./Main/main$(OBJ_SUFF)
 
 DLLS=$(LAPACKE_LIB_PATH) $(CBLAS_LIB_PATH) $(LAPACK_LIB_PATH) $(BLAS_LIB_PATH) $(OTHER_LIBS)

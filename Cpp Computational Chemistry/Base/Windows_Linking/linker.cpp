@@ -27,7 +27,7 @@ static int dll_listify(char *str, char ***out) {
 	int squoted = 0, dquoted = 0, escaped = 0, trim = 1;
 	while(str[i] != 0) {
 		switch(str[i]) {
-		case '\\' :
+		case '\\':
 			escaped = !escaped;
 			trim = 0;
 			break;
@@ -37,7 +37,7 @@ static int dll_listify(char *str, char ***out) {
 			}
 			trim = 0;
 			break;
-		case '\'' :
+		case '\'':
 			if(!dquoted && !escaped) {
 				squoted = !squoted;
 			}
@@ -97,6 +97,6 @@ void unlinkDLLs(void) {
 	}
 	free(handles);
 #else
-		return;
+	return;
 #endif
 }
