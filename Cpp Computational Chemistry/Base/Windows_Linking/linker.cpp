@@ -17,7 +17,6 @@
 static HINSTANCE *handles;
 static int nhandles;
 static char dll_list[] = DLLS;
-#endif
 
 static int dll_listify(char *str, char ***out) {
 	*out = (char **) calloc(0, sizeof(char *));
@@ -73,6 +72,8 @@ static int dll_listify(char *str, char ***out) {
 	count++;
 	return (count);
 }
+
+#endif
 
 void linkDLLs(void) {
 #ifndef __ELF__

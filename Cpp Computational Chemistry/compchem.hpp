@@ -8,6 +8,13 @@
 #ifndef COMPCHEM_HPP_
 #define COMPCHEM_HPP_
 
+#include <stdlib.h>
+#include <exception>
+#include <array>
+#include <initializer_list>
+#include <thread>
+#include <mutex>
+
 #include "Base/base.hpp"
 #include "input.hpp"
 #include "linker.hpp"

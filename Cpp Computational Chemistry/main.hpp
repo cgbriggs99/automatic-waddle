@@ -16,9 +16,8 @@
 
 
 namespace compchem {
-using namespace compchem;
 
-void initialize(class Molecule **mol, int argc, char **argv);
+void initialize(compchem::Molecule **mol, int argc, char **argv);
 
 }
 

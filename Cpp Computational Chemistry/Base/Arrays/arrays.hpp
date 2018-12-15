@@ -15,10 +15,8 @@
 #include <initializer_list>
 #include <thread>
 #include <mutex>
-
-#ifndef __THREAD_COUNT__
-#define __THREAD_COUNT__ 8
-#endif
+#include <complex>
+#include <algorithm>
 
 namespace compchem {
 
@@ -30,7 +28,7 @@ public:
 		shape = {0, 0, 0, 0, 0, 0, 0};
 	}
 	Dimension(int dim0, int dim1 = 0, int dim2 = 0, int dim3 = 0, int dim4 = 0,
-	          int dim5 = 0, int dim6 = 0) {
+			int dim5 = 0, int dim6 = 0) {
 		shape = {dim0, dim1, dim2, dim3, dim4, dim5, dim6};
 	}
 	~Dimension() = default;
@@ -46,10 +44,6 @@ public:
 bool operator==(Dimension dim1, Dimension dim2);
 bool operator!=(Dimension dim1, Dimension dim2);
 
-/*
- * For full FORTRAN feel, these arrays will be 1-indexed and use the () notation for indexing.
- * INTEGER, DIMENSION(
- */
 template<typename _T>
 class FortranArray {
 private:
@@ -57,41 +51,61 @@ private:
 	compchem::Dimension dim;
 
 	static void __addition_thread(FortranArray<_T> *a, FortranArray<_T> *b,
-	                              int id);
+			int id);
 	static void __subtraction_thread(FortranArray<_T> *a, FortranArray<_T> *b,
-	                                 int id);
+			int id);
 	static void __multiplication_thread(FortranArray<_T> *a,
-	                                    FortranArray<_T> *b, int id);
+			FortranArray<_T> *b, int id);
 	static void __multiplication_thread(FortranArray<_T> *a, _T &b, int id);
 	static void __division_thread(FortranArray<_T> *a, FortranArray<_T> *b,
-	                              int id);
+			int id);
 	static void __division_thread(FortranArray<_T> *a, _T &b, int id);
 	static void __comparison_thread(FortranArray<_T> *a, FortranArray<_T> *b,
-	                                int id, bool *conds);
+			int id, bool *conds);
 
 public:
 	explicit FortranArray(compchem::Dimension dim);
 	explicit FortranArray(compchem::Dimension dim,
-	                      std::initializer_list<_T> list);
+			std::initializer_list<_T> list);
 	FortranArray(std::initializer_list<_T> list);
 	explicit FortranArray(compchem::Dimension dim, _T *values);
 	FortranArray(const FortranArray<_T> &arr);
 	~FortranArray();
 
-	compchem::Dimension getShape() const;
-	int getShape(int ind) const;
-	_T *getData() const;
-	int getSize() const;
+	compchem::Dimension getShape() const {
+		return (this->dim);
+	}
+
+	int getShape(int ind) const {
+		if (ind >= 7 || ind < 0) {
+			throw(new compchem::ArrayIndexOutOfBoundsException());
+		}
+		return (this->dim[ind]);
+	}
+
+	const _T *getData() const {
+		return (this->data);
+	}
+
+	int getSize() const {
+		int prod = 1;
+		for (int i = 0; i < 7; i++) {
+			if (this->dim[i] == 0) {
+				continue;
+			}
+			prod *= this->dim[i];
+		}
+		return (prod);
+	}
 
 	_T &subscript(int ind0, int ind1 = 0, int ind2 = 0, int ind3 = 0, int ind4 =
-	        0,
-	              int ind5 = 0, int ind6 = 0);
+			0, int ind5 = 0, int ind6 = 0);
 	const _T &subscript(int ind0, int ind1 = 0, int ind2 = 0, int ind3 = 0,
-	                    int ind4 = 0, int ind5 = 0, int ind6 = 0) const;
+			int ind4 = 0, int ind5 = 0, int ind6 = 0) const;
 	_T &operator()(int ind0, int ind1 = 0, int ind2 = 0, int ind3 = 0,
-	               int ind4 = 0, int ind5 = 0, int ind6 = 0);
+			int ind4 = 0, int ind5 = 0, int ind6 = 0);
 	const _T &operator()(int ind0, int ind1 = 0, int ind2 = 0, int ind3 = 0,
-	                     int ind4 = 0, int ind5 = 0, int ind6 = 0) const;
+			int ind4 = 0, int ind5 = 0, int ind6 = 0) const;
 
 	FortranArray<_T> &operator=(const FortranArray<_T> &b);
 	FortranArray<_T> &operator+=(const FortranArray<_T> &b);
@@ -102,28 +116,30 @@ public:
 	FortranArray<_T> &operator/=(const _T &b);
 	bool operator==(const FortranArray<_T> &b);
 
+	void sort();
+
 	template<typename _T1>
-	friend FortranArray<_T1> operator+(FortranArray<_T1> &a,
-	                                   const FortranArray<_T1> &b);
+	friend FortranArray<_T1> operator+(FortranArray<_T1> a,
+			const FortranArray<_T1> &b);
 
 	template<typename _T1>
 	friend compchem::FortranArray<_T1> operator-(compchem::FortranArray<_T1> a,
-	                                   const compchem::FortranArray<_T1> &b);
+			const compchem::FortranArray<_T1> &b);
 
 	template<typename _T1>
-	friend FortranArray<_T1> operator*(FortranArray<_T1> a, _T1 k);
+	friend FortranArray<_T1> operator*(FortranArray<_T1> a, const _T1 &k);
 
 	template<typename _T1>
-	friend FortranArray<_T1> &operator*(_T1 k, FortranArray<_T1> a);
+	friend FortranArray<_T1> operator*(_T1 k, const FortranArray<_T1> &a);
 
 	//Standard Fortran * operator. Not matrix multiplication.
 	template<typename _T1>
 	friend FortranArray<_T1> operator*(FortranArray<_T1> a,
-	                                   const FortranArray<_T1> &b);
+			const FortranArray<_T1> &b);
 
 	template<typename _T1>
 	friend FortranArray<_T1> operator/(FortranArray<_T1> a,
-	                                   const FortranArray<_T1> &b);
+			const FortranArray<_T1> &b);
 
 	template<typename _T1>
 	friend FortranArray<_T1> operator/(FortranArray<_T1> a, _T1 k);
@@ -134,6 +150,8 @@ public:
 	template<typename _U>
 	operator FortranArray<_U>();
 
+	FortranArray<_T> &transpose();
+
 //	template<typename _U>
 //	explicit operator _U *();
 
@@ -142,37 +160,37 @@ public:
 	 */
 	template<typename _T1>
 	friend FortranArray<_T1> &matmult(FortranArray<_T1> a1,
-	                                  FortranArray<_T1> a2);
+			FortranArray<_T1> a2);
 
-	friend FortranArray<double> &dgemm(bool transposea1, bool t_a2, int m,
-	                                   int n, int k, double alpha,
-	                                   FortranArray<double> a1,
-	                                   FortranArray<double> a2, double beta,
-	                                   FortranArray<double> c);
+	friend int eigenval_compute(bool compute_left_ev, bool compute_right_ev,
+			FortranArray<double> const &input_array,
+			FortranArray<std::complex<double>> *eigenval,
+			FortranArray<double> *left_ev, FortranArray<double> *right_ev);
+
+	friend int eigenval_compute(bool compute_left_ev, bool compute_right_ev,
+			FortranArray<double> const &input_array,
+			FortranArray<double> *eigenvalr, FortranArray<double> *eigenvali,
+			FortranArray<double> *left_ev, FortranArray<double> *right_ev);
 };
 
 template<typename _T1>
-FortranArray<_T1> operator+(FortranArray<_T1> &a,
-                            const FortranArray<_T1> &b);
+FortranArray<_T1> operator+(FortranArray<_T1> a, const FortranArray<_T1> &b);
 
 template<typename _T1>
-FortranArray<_T1> operator-(FortranArray<_T1> a,
-                            const FortranArray<_T1> &b);
+FortranArray<_T1> operator-(FortranArray<_T1> a, const FortranArray<_T1> &b);
 
 template<typename _T1>
-FortranArray<_T1> operator*(FortranArray<_T1> a, _T1 k);
+FortranArray<_T1> operator*(FortranArray<_T1> a, const _T1 &k);
 
 template<typename _T1>
-FortranArray<_T1> &operator*(_T1 k, FortranArray<_T1> a);
+FortranArray<_T1> operator*(_T1 k, const FortranArray<_T1> &a);
 
 //Standard Fortran * operator. Not matrix multiplication.
 template<typename _T1>
-FortranArray<_T1> operator*(FortranArray<_T1> a,
-                            const FortranArray<_T1> &b);
+FortranArray<_T1> operator*(FortranArray<_T1> a, const FortranArray<_T1> &b);
 
 template<typename _T1>
-FortranArray<_T1> operator/(FortranArray<_T1> a,
-                            const FortranArray<_T1> &b);
+FortranArray<_T1> operator/(FortranArray<_T1> a, const FortranArray<_T1> &b);
 
 template<typename _T1>
 FortranArray<_T1> operator/(FortranArray<_T1> a, _T1 k);
@@ -181,14 +199,20 @@ FortranArray<_T1> operator/(FortranArray<_T1> a, _T1 k);
  * Friends that define useful connections to lapack and blas.
  */
 template<typename _T1>
-FortranArray<_T1> &matmult(FortranArray<_T1> a1,
-	FortranArray<_T1> a2);
+FortranArray<_T1> &matmult(FortranArray<_T1> a1, FortranArray<_T1> a2);
 
-FortranArray<double> &dgemm(bool transposea1, bool t_a2, int m,
-	int n, int k, double alpha,
-	FortranArray<double> a1,
-	FortranArray<double> a2, double beta,
-	FortranArray<double> c);
+/*
+ * Wrapper for LAPACKE_dgeev
+ */
+extern int eigenval_compute(bool compute_left_ev, bool compute_right_ev,
+		FortranArray<double> const &input_array,
+		FortranArray<std::complex<double>> *eigenval,
+		FortranArray<double> *left_ev, FortranArray<double> *right_ev);
+
+extern int eigenval_compute(bool compute_left_ev, bool compute_right_ev,
+		FortranArray<double> const &input_array,
+		FortranArray<double> *eigenvalr, FortranArray<double> *eigenvali,
+		FortranArray<double> *left_ev, FortranArray<double> *right_ev);
 
 }
 

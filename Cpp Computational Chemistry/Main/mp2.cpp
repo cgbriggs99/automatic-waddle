@@ -11,7 +11,6 @@
 #include "../compchem.hpp"
 
 using namespace compchem;
-using namespace array;
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -21,7 +20,7 @@ int main(int argc, char **argv) {
 	mol->computeSCF();
 	mol->computeMOTEI();
 	mol->computeMP2();
-	printMP2(mol);
+	printMP2(*mol);
 	delete mol;
 	unlinkDLLs();
 	return (0);

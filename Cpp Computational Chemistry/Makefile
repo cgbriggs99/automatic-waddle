@@ -53,7 +53,7 @@ base$(ARCH_SUFF): $(BASE_OBJECTS)
 $(SOURCES): $(DEPS)
 	$(CC) $(CFLAGS) -o $(subst .cpp,$(EXEC_SUFF),$@) $@ $(DEPS) $(LDFLAGS) $(DLLS) $(DEFINES) $(INCLUDES)
 
-$(BASE_OBJECTS) $(CHEM_OBJECTS) $(CALC_OBJECTS):
+$(BASE_OBJECTS) $(CHEM_OBJECTS) $(CALC_OBJECTS) ./Main/main$(OBJ_SUFF):
 	$(CC) $(CFLAGS) -c -o $@ $(subst $(OBJ_SUFF),.cpp,$@) $(DEFINES) $(INCLUDES)
 	
 $(BASE_SOURCES) $(CHEM_SOURCES) $(CALC_SOURCES) ./Main/main.cpp:

@@ -24,12 +24,12 @@
 using namespace std;
 using namespace compchem;
 
-compchem::Atom::Atom(int num, double x, double y, double z) :
-		pos(*(new compchem::FortranArray<double>(Dimension(3), { x, y, z }))) {
+compchem::Atom::Atom(int num, double x, double y, double z) {
 	this->charge = 0;
 	this->mass = compchem::amu(num);
 	this->num = num;
 	this->true_charge = 0;
+	this->pos = new FortranArray<double>({x, y, z});
 }
 
 compchem::Atom::~Atom() {
@@ -210,6 +210,9 @@ compchem::Molecule::Molecule(std::vector<Atom> &atoms, int num, double scf_eps) 
 	* this->orbitals * sizeof(double);
 	_vibrations = new (this->memory + shift) double[this->hessian_size * this->hessian_size];
 	shift += this->hessian_size * sizeof(double);
+#else
+	memory = NULL;
+	blocks = -2;
 #endif
 	//Geometry data.
 	distances = (new compchem::FortranArray<double>(
@@ -275,6 +278,7 @@ compchem::Molecule::Molecule(std::vector<Atom> &atoms, int num, double scf_eps) 
 	    Dimension(2 * orbitals, 2 * orbitals, 2 * orbitals, 2 * orbitals)));
 
 	vibrations = (new FortranArray<double>(Dimension(3 * numatoms)));
+	occupied = electrons / 2;
 }
 
 Molecule::~Molecule() {

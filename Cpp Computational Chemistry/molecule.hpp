@@ -8,10 +8,21 @@
 #ifndef MOLECULE_HPP_
 #define MOLECULE_HPP_
 
+
 #include <stdio.h>
 #include <stdarg.h>
 #include "compchem.hpp"
+
 #include <vector>
+#include <vector>
+#include <vector>
+#include <vector>
+#include <vector>
+#include <vector>
+#include <vector>
+#include <vector>
+#include <vector>
+
 
 namespace compchem {
 
@@ -21,18 +32,18 @@ class Atom {
 	friend class Molecule;
 	friend void compchem::input(compchem::Molecule **, FILE *);
 private:
-	compchem::FortranArray<double> &pos;
+	compchem::FortranArray<double> *pos;
 	double mass;
 	double true_charge;
 	int num;
 	int charge;
 public:
-	Atom():
-		pos(*(new compchem::FortranArray<double>(compchem::Dimension(3)))) {
+	Atom() {
 		this->mass = 0;
 		this->true_charge = 0;
 		this->num = 0;
 		this->charge = 0;
+		this->pos = new FortranArray<double>(Dimension(3));
 	}
 	Atom(int num, double x, double y, double z);
 
@@ -51,7 +62,7 @@ public:
 	}
 
 	compchem::FortranArray<double> &getPos() {
-		return (pos);
+		return (*pos);
 	}
 
 	double getTrueCharge() {

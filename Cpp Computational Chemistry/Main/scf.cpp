@@ -10,7 +10,6 @@
 #include "../compchem.hpp"
 
 using namespace compchem;
-using namespace array;
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -18,7 +17,7 @@ int main(int argc, char **argv) {
 	Molecule *mol;
 	initialize(&mol, argc, argv);
 	mol->computeSCF(true);
-	printSCF(mol);
+	printSCF(*mol);
 	delete mol;
 	unlinkDLLs();
 	return (0);

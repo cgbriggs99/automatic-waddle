@@ -15,7 +15,7 @@ using namespace compchem;
 int main(int argc, char **argv) {
 	linkDLLs();
 	compchem::Molecule *mol;
-	initialize(&mol, argc, argv);
+	compchem::initialize(&mol, argc, argv);
 	mol->computeDists();
 	mol->computeAngles();
 	mol->computePlaneAngles();

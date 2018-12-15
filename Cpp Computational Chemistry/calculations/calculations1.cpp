@@ -18,15 +18,6 @@
 using namespace std;
 using namespace compchem;
 
-static int compare(const void *a, const void *b) {
-	if(*((double *) a) - *((double *) b) > 0) {
-		return (1);
-	} else if(*((double *) a) - *((double *) b) < 0) {
-		return (-1);
-	}
-	return (0);
-}
-
 //Simple 3d distance calculation without overflow or underflow.
 static double hypot3(double x, double y, double z) {
 	double max, a, b;
@@ -189,10 +180,10 @@ void compchem::Molecule::momentsOfInertia() {
 
 	double *im = (double *) malloc(3 * sizeof(double));
 
-	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'N', 3,
-	    this->inertial_moments->getData(), 3,
-	    this->principle_moments->getData(), im, NULL, 3, NULL, 3);
-	qsort(this->principle_moments->getData(), 3, sizeof(double), compare);
+	compchem::eigenval_compute(false, false,
+	    *(this->inertial_moments),
+	    this->principle_moments, nullptr, NULL, NULL);
+	this->principle_moments->sort();
 	free(im);
 }
 

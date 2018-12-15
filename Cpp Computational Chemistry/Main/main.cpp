@@ -10,12 +10,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h>
 #include "../compchem.hpp"
+#include <errno.h>
 
 using namespace compchem;
 
-void compchem::initialize(class Molecule **mol, int argc, char **argv) {
+void compchem::initialize(compchem::Molecule **mol, int argc, char **argv) {
 	printf("number of args: %d\n", argc);
 	if(argc == 2) {
 		if(!strcmp(argv[1], "-h")) {
@@ -41,7 +41,12 @@ void compchem::initialize(class Molecule **mol, int argc, char **argv) {
 	muy = fopen(argv[8], "r");
 	muz = fopen(argv[9], "r");
 	hessian = fopen(argv[10], "r");
-	inputSCF(mol, geom, enuc, s, t, v, eri, mux, muy, muz, hessian);
+	if(errno != 0) {
+		perror("Error in compchem::initialize");
+		exit(0);
+	}
+	errno = 0;
+	compchem::inputSCF(mol, geom, enuc, s, t, v, eri, mux, muy, muz, hessian);
 	fclose(geom);
 	fclose(enuc);
 	fclose(s);

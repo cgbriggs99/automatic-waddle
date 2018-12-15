@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string>
 #include "../../compchem.hpp"
 
 using namespace compchem;
@@ -159,7 +160,7 @@ void compchem::printFreqs(Molecule &molecule) {
 	fflush(stdout);
 }
 
-void compchem::printSCF(Molecule &molecule) {
+void compchem::printSCF(compchem::Molecule &molecule) {
 	puts("\nFock matrix");
 	for(int i = 0; i < molecule.getOrbitals(); i++) {
 		for(int j = 0; j < molecule.getOrbitals(); j++) {

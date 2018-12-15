@@ -16,15 +16,6 @@
 using namespace std;
 using namespace compchem;
 
-static int compare(const void *a, const void *b) {
-	if(*((double *) a) - *((double *) b) > 0) {
-		return (1);
-	} else if(*((double *) a) - *((double *) b) < 0) {
-		return (-1);
-	}
-	return (0);
-}
-
 void compchem::Molecule::harmonics() {
 	for(int i = 0; i < this->hessian->getShape()[0]; i++) {
 		for(int j = 0; j < this->hessian->getShape()[0]; j++) {
@@ -32,15 +23,10 @@ void compchem::Molecule::harmonics() {
 			    this->atoms[i / 3].getMass() * this->atoms[j / 3].getMass());
 		}
 	}
-	compchem::FortranArray<double> im(this->hessian_eigs->getShape());
-	LAPACKE_dgeev(LAPACK_ROW_MAJOR, 'N', 'N', this->hessian->getShape()[0],
-	    this->hessian->getData(), this->hessian->getShape()[0],
-	    this->hessian_eigs->getData(), im.getData(), NULL,
-	    this->hessian->getShape()[0],
-	    NULL, this->hessian->getShape()[0]);
 
-	qsort(this->hessian_eigs->getData(), this->hessian->getShape()[0],
-	    sizeof(double), compare);
+	compchem::eigenval_compute(false, false, *(this->hessian), this->hessian_eigs, nullptr, nullptr, nullptr);
+
+	this->hessian_eigs->sort();
 
 	for(int i = 0; i < this->hessian->getShape()[0]; i++) {
 		this->vibrations->subscript(i) = sqrt(this->hessian_eigs->subscript(i))

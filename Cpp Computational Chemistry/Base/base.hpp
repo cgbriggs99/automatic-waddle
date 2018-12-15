@@ -8,6 +8,13 @@
 #ifndef BASE_BASE_HPP_
 #define BASE_BASE_HPP_
 
+#include <stdlib.h>
+#include <exception>
+#include <array>
+#include <initializer_list>
+#include <thread>
+#include <mutex>
+
 #include "Arrays/arrays.hpp"
 #include "Arrays/exceptions.hpp"
 
