@@ -24,7 +24,7 @@ void compchem::input(compchem::Molecule **out, FILE *fp) {
 	for(int i = 0; i < num; i++) {
 		double n, x, y, z;
 		ignore = fscanf(fp, "%lf %lf %lf %lf", &n, &x, &y, &z);
-		atoms.push_back(Atom(n, x, y, z));
+		atoms.push_back(*(new Atom(n, x, y, z)));
 	}
 
 	*out = new compchem::Molecule(atoms, num);
@@ -133,9 +133,9 @@ void compchem::inputSCF(compchem::Molecule **out, FILE *mol, FILE *enuc, FILE *s
 	}
 
 	for(int i = 0; i < (*out)->getHessianSize(); i++) {
-		for(int j = 0; j < (*out)->getNumatoms(); j++) {
+ 		for(int j = 0; j < (*out)->getNumatoms(); j++) {
 			double a, b, c;
-			ignore = fscanf(hessian, "%lf %lf %lf", &a, &b, &c);
+ 			ignore = fscanf(hessian, "%lf %lf %lf", &a, &b, &c);
 			(*out)->getHessian()(i, 3 * j) = a;
 			(*out)->getHessian()(i, 3 * j + 1) = b;
 			(*out)->getHessian()(i, 3 * j + 2) = c;

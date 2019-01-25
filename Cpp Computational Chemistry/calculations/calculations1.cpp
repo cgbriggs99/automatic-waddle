@@ -24,31 +24,16 @@ static double hypot3(double x, double y, double z) {
 
 	if(fabs(x) >= fabs(y) && fabs(x) >= fabs(z)) {
 		max = x;
-		if(fabs(y) > fabs(z)) {
-			a = y;
-			b = z;
-		} else {
-			a = z;
-			b = y;
-		}
+		a = y;
+		b = z;
 	} else if(fabs(y) > fabs(x) && fabs(y) >= fabs(z)) {
 		max = y;
-		if(fabs(x) > fabs(z)) {
-			a = x;
-			b = z;
-		} else {
-			a = z;
-			b = x;
-		}
+		a = x;
+		b = z;
 	} else {
 		max = z;
-		if(fabs(x) > fabs(y)) {
-			a = x;
-			b = y;
-		} else {
-			a = y;
-			b = x;
-		}
+		a = x;
+		b = y;
 	}
 
 	if(max == 0) {
@@ -62,7 +47,10 @@ static double hypot3(double x, double y, double z) {
 }
 
 static double hypot3(compchem::FortranArray<double> v) {
-	return (hypot3(v(0), v(1), v(2)));
+	double x = v(0);
+	double y = v(1);
+	double z = v(2);
+	return (hypot3(x, y, z));
 }
 
 void compchem::Molecule::computeDists() {
@@ -79,18 +67,19 @@ void compchem::Molecule::computeDists() {
 void compchem::Molecule::computeAngles() {
 	for(int i = 0; i < this->numatoms; i++) {
 		for(int j = 0; j < this->numatoms; j++) {
-			for(int k = 0; k < this->numatoms; k++) {
+			for(int k = j; k < this->numatoms; k++) {
 				if(i == j || i == k || j == k) {
 					(*(this->angles))(i, j, k) = 0;
 					continue;
 				}
 
-				compchem::FortranArray<double> d1 = this->atoms[j].getPos()
-				    - this->atoms[i].getPos(), d2 = this->atoms[k].getPos()
-				    - this->atoms[i].getPos();
-
-				(*(this->angles))(i, j, k) = acos(
-				    d1.dotprod(d2) / (hypot3(d1) * hypot3(d2)));
+				compchem::FortranArray<double> d1 = (this->atoms[j].getPos()
+				    - this->atoms[i].getPos()) / hypot3(this->atoms[j].getPos() - this->atoms[i].getPos()),
+				    		d2 = (this->atoms[k].getPos()
+				    - this->atoms[i].getPos()) / hypot3(this->atoms[k].getPos() - this->atoms[i].getPos());
+				double dot = d1.dotprod(d2);
+				(*(this->angles))(i, j, k) = acos(dot);
+				(*(this->angles))(i, k, j) = (*(this->angles))(i, j, k);
 			}
 		}
 	}
@@ -105,8 +94,12 @@ void compchem::Molecule::computePlaneAngles() {
 					    - this->atoms[i].getPos(), d2 = this->atoms[k].getPos()
 					    - this->atoms[i].getPos(), d3 = this->atoms[l].getPos()
 					    - this->atoms[i].getPos();
-					(*(this->plane_angles))(i, j, k, l) = ((d1.crossprod(d2))
-					    / sin((*(this->angles))(i, j, k))).dotprod(d3);
+					//Normalize difference vectors.
+					d1 = d1 / hypot3(d1);
+					d2 = d2 / hypot3(d2);
+					d3 = d3 / hypot3(d3);
+					(*(this->plane_angles))(i, j, k, l) = asin(((d1.crossprod(d2))
+					    / sin((*(this->angles))(i, j, k))).dotprod(d3));
 				}
 			}
 		}
@@ -122,6 +115,11 @@ void compchem::Molecule::computeTorsionAngles() {
 					    - this->atoms[j].getPos(), d2 = this->atoms[j].getPos()
 					    - this->atoms[k].getPos(), d3 = this->atoms[l].getPos()
 					    - this->atoms[k].getPos();
+					//Normalize difference vectors.
+					d1 = d1 / hypot3(d1);
+					d2 = d2 / hypot3(d2);
+					d3 = d3 / hypot3(d3);
+
 					(*(this->torsion_angles))(i, j, k, l) = acos(
 					    ((d1.crossprod(d2)).dotprod(d2.crossprod(d3)))
 					        / (sin((*(this->angles))(i, j, k))

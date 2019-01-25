@@ -33,7 +33,11 @@ compchem::Atom::Atom(int num, double x, double y, double z) {
 }
 
 compchem::Atom::~Atom() {
-	delete &pos;
+//	if(pos != nullptr) {
+//		delete pos;
+//		pos = nullptr;
+//	}
+	;
 }
 
 compchem::Molecule::Molecule(std::vector<Atom> &atoms, int num, double scf_eps) :
@@ -42,10 +46,13 @@ compchem::Molecule::Molecule(std::vector<Atom> &atoms, int num, double scf_eps) 
 		inertial_moments((new FortranArray<double>(Dimension(3, 3)))),
 		principle_moments((new FortranArray<double>(Dimension(3)))),
 		rotational_constants((new FortranArray<double>(Dimension(3)))),
-		atoms(atoms) {
+		atoms(*(new std::vector<Atom>())){
 	long total_mem = 0;
 	this->numatoms = num;
 //	this->hessian_size = 3 * num;
+	for(int i = 0; i < atoms.size(); i++) {
+		this->atoms.push_back(atoms[i]);
+	}
 
 	this->electrons = 0;
 	this->orbitals = 0;
@@ -282,8 +289,6 @@ compchem::Molecule::Molecule(std::vector<Atom> &atoms, int num, double scf_eps) 
 }
 
 Molecule::~Molecule() {
-	puts("debug6");
-	fflush(stdout);
 
 	delete center_of_mass;
 	delete rotational_constants;
@@ -297,15 +302,9 @@ Molecule::~Molecule() {
 	delete plane_angles;
 	delete torsion_angles;
 
-	puts("debug9");
-	fflush(stdout);
-
 	//Harmonic data.
 	delete hessian;
 	delete hessian_eigs;
-
-	puts("debug11");
-	fflush(stdout);
 
 	//Energies.
 	delete molecular_energies;
@@ -316,15 +315,9 @@ Molecule::~Molecule() {
 	delete attraction;
 	delete hamiltonian;
 
-	puts("debug14");
-	fflush(stdout);
-
 	delete two_electron;
 	delete mo_two_electron;
 	delete spin_two_electron;
-
-	puts("debug12");
-	fflush(stdout);
 
 	//Important matrices.
 	delete orthogonal;
@@ -338,9 +331,6 @@ Molecule::~Molecule() {
 	delete muz;
 	delete spin_fock;
 
-	puts("debug13");
-	fflush(stdout);
-
 	//CCSD intermediates;
 	delete t1_amplitudes;
 	delete t2_amplitudes;
@@ -349,14 +339,10 @@ Molecule::~Molecule() {
 	delete tpe1;
 	delete tpe2;
 
-	puts("debug10");
-	fflush(stdout);
-
 	for(int i = 0; i < this->numatoms; i++) {
-		delete &(atoms[i].pos);
+		delete (atoms[i].pos);
 	}
-	puts("debug7");
-	fflush(stdout);
+	delete &atoms;
 
 	if(blocks == -2) {
 		//free(memory);
@@ -369,8 +355,7 @@ Molecule::~Molecule() {
 		//Close stuff.
 #endif
 	}
-	puts("debug8");
-	fflush(stdout);
+
 }
 
 #endif

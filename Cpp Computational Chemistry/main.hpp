@@ -17,6 +17,8 @@
 
 namespace compchem {
 
+void initialize_geometry(compchem::Molecule **mol, int argc, char **argv);
+
 void initialize(compchem::Molecule **mol, int argc, char **argv);
 
 }

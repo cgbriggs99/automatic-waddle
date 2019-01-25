@@ -27,12 +27,12 @@ void compchem::printAngles(Molecule &molecule) {
 	puts("\nBond angles");
 	for(int i = 0; i < molecule.getNumatoms(); i++) {
 		for(int j = 0; j < molecule.getNumatoms(); j++) {
-			for(int k = 0; k < molecule.getNumatoms(); k++) {
+			for(int k = j; k < molecule.getNumatoms(); k++) {
 				if(i == j || i == k || j == k) {
 					continue;
 				}
 				if(molecule.getDistances()(i, k) > 4.0
-				    || molecule.getDistances()(j, k) > 4.0) {
+				    || molecule.getDistances()(i, j) > 4.0) {
 					continue;
 				}
 				printf("%d\t%d\t%d\t%3.4f\n", i, j, k,
@@ -51,8 +51,8 @@ void compchem::printAngles(Molecule &molecule) {
 						continue;
 					}
 					if(molecule.getDistances()(i, k) > 4.0
-					    || molecule.getDistances()(j, k) > 4.0
-					    || molecule.getDistances()(k, l) > 4.0) {
+					    || molecule.getDistances()(i, j) > 4.0
+					    || molecule.getDistances()(i, l) > 4.0) {
 						continue;
 					}
 					printf("%d\t%d\t%d\t%d\t%3.4f\n", i, j, k, l,

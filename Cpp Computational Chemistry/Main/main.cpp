@@ -15,6 +15,15 @@
 
 using namespace compchem;
 
+void compchem::initialize_geometry(compchem::Molecule **mol, int argc, char **argv) {
+	printf("number of args: %d\n", argc);
+	if(argc == 2) {
+		FILE *geom = fopen(argv[1], "r");
+		compchem::input(mol, geom);
+		fclose(geom);
+	}
+}
+
 void compchem::initialize(compchem::Molecule **mol, int argc, char **argv) {
 	printf("number of args: %d\n", argc);
 	if(argc == 2) {

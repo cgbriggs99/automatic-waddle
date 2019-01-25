@@ -17,9 +17,9 @@ using namespace std;
 using namespace compchem;
 
 void compchem::Molecule::harmonics() {
-	for(int i = 0; i < this->hessian->getShape()[0]; i++) {
-		for(int j = 0; j < this->hessian->getShape()[0]; j++) {
-			this->hessian->subscript(i, j) /= sqrt(
+	for(int i = 0; i < this->hessian->getShape(0); i++) {
+		for(int j = 0; j < this->hessian->getShape(1); j++) {
+			(*(this->hessian))(i, j) = (*(this->hessian))(i, j) / sqrt(
 			    this->atoms[i / 3].getMass() * this->atoms[j / 3].getMass());
 		}
 	}
@@ -29,8 +29,12 @@ void compchem::Molecule::harmonics() {
 	this->hessian_eigs->sort();
 
 	for(int i = 0; i < this->hessian->getShape()[0]; i++) {
-		this->vibrations->subscript(i) = sqrt(this->hessian_eigs->subscript(i))
+		if((*(this->hessian_eigs))(i) <= -0.0) {
+			(*(this->vibrations))(i) = 0.0;
+		} else {
+		(*(this->vibrations))(i) = sqrt((*(this->hessian_eigs))(i))
 		    * 5140.697669352;
+		}
 	}
 }
 #endif

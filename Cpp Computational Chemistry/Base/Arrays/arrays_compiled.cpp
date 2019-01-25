@@ -55,7 +55,7 @@ compchem::FortranArray<double>::FortranArray(const FortranArray<double> &arr) {
 
 template<>
 compchem::FortranArray<double>::~FortranArray() {
-	delete[] (this->data);
+ 	delete[] (this->data);
 }
 
 template<>
@@ -65,17 +65,14 @@ double &compchem::FortranArray<double>::operator()(int ind0, int ind1, int ind2,
 	int size = 1;
 	std::array<int, 7> inds = { ind0, ind1, ind2, ind3, ind4, ind5, ind6 };
 
-	for (int i = 0; i < 7; i++) {
-		if (inds[i] > dim[i] || inds[i] < 0) {
+	for(int i = 0; i < this->getShape().getDimensionality(); i++) {
+		if(inds[i] >= dim[i] || inds[i] < 0) {
 			throw(new ArrayIndexOutOfBoundsException);
 		}
-		if (inds[i] == 0) {
-			break;
-		}
-		ind += (inds[i] - 1) * size;
-		inds[i] *= dim[i];
+		ind += inds[i] * size;
+		size *= dim[i];
 	}
-	return ((data[ind]));
+	return (data[ind]);
 }
 
 template<>
@@ -85,15 +82,12 @@ const double &compchem::FortranArray<double>::operator()(int ind0, int ind1, int
 	int size = 1;
 	std::array<int, 7> inds = { ind0, ind1, ind2, ind3, ind4, ind5, ind6 };
 
-	for (int i = 0; i < 7; i++) {
-		if (inds[i] > dim[i] || inds[i] < 0) {
+	for(int i = 0; i < this->getShape().getDimensionality(); i++) {
+		if(inds[i] >= dim[i] || inds[i] < 0) {
 			throw(new ArrayIndexOutOfBoundsException);
 		}
-		if (inds[i] == 0) {
-			break;
-		}
-		ind += (inds[i] - 1) * size;
-		inds[i] *= dim[i];
+		ind += inds[i] * size;
+		size *= dim[i];
 	}
 	return (data[ind]);
 }
@@ -290,11 +284,11 @@ compchem::FortranArray<double> compchem::operator/(compchem::FortranArray<double
 
 template<>
 double compchem::FortranArray<double>::dotprod(FortranArray<double> &b) {
-	if (this->getShape(1) != b.getShape(1)) {
+	if (this->getShape(0) != b.getShape(0)) {
 		throw(new compchem::SizeMismatchException);
 	}
 	double accum = (*this)(0) * b(0);
-	for (int i = 1; i < this->getShape(1); i++) {
+	for (int i = 1; i < this->getShape(0); i++) {
 		accum += (*this)(i) * b(i);
 	}
 	return (accum);
@@ -303,7 +297,7 @@ double compchem::FortranArray<double>::dotprod(FortranArray<double> &b) {
 template<>
 compchem::FortranArray<double> &compchem::FortranArray<double>::crossprod(
 		compchem::FortranArray<double> &b) {
-	if (this->getShape(1) != 3 || b.getShape(1) != 3) {
+	if (this->getShape(0) != 3 || b.getShape(0) != 3) {
 		throw(new compchem::CrossProductException);
 	}
 	compchem::FortranArray<double> *out = new FortranArray<double>(Dimension(3));
@@ -338,13 +332,25 @@ static void sort_work(double *array, int low, int high) {
 	}
 }
 
+static int compare(const void *a, const void *b) {
+	if(*(double *) a > *(double *) b) {
+		return (1);
+	} else if(*(double *) b > *(double *) a) {
+		return (-1);
+	} else {
+		return (0);
+	}
+}
+
 template<>
 void compchem::FortranArray<double>::sort() {
 	if(this->getShape().getDimensionality() != 1) {
 		throw(new compchem::SizeMismatchException());
 	}
-	sort_work(this->data, 0, this->getSize() - 1);
 
+
+	qsort(this->data, this->getShape(0), sizeof(double), compare);
+	//sort_work(this->data, 0, this->getSize() - 1);
 }
 
 template<>

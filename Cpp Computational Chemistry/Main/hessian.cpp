@@ -17,8 +17,8 @@ int main(int argc, char **argv) {
 	Molecule *mol;
 	initialize(&mol, argc, argv);
 	mol->harmonics();
+	printEigenvalues(*mol);
 	printFreqs(*mol);
-	printRotor(*mol);
 	delete mol;
 	unlinkDLLs();
 	return (0);
